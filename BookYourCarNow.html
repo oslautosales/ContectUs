@@ -438,7 +438,7 @@
 <body>
     <!-- 固定顶部导航栏 -->
     <nav class="navbar" id="navbar">
-        <h1>Premium Automotive Collection</h1>
+        <h1>OSL AutoSales</h1>
         <a href="#" class="nav-btn">Contact Our Dealership</a>
     </nav>
 
@@ -459,13 +459,14 @@
                 <!-- 新品卡片1 - 替换Angle 1为指定图片 -->
                 <div class="car-card">
                     <div class="card-thumbnails">
-                        <div class="card-thumbnail active">Angle 1</div>
-                        <div class="card-thumbnail">Angle 2</div>
-                        <div class="card-thumbnail">Interior</div>
-                        <div class="card-thumbnail">Tech</div>
+                        <div class="card-thumbnail active" data-img="trazfront.jpeg"><b>Perodua Traz Front</b></div>
+                        <div class="card-thumbnail" data-img="trazback.jpeg"><b>Perodua Traz Back</b></div>
+                        <div class="card-thumbnail" data-img="trazinterior.jpeg"><b>Perodua Traz Interior</b></div>
+                        <div class="card-thumbnail"><b>Perodua Traz</b></div>
                     </div>
-                    <div class="card-main-img" style="background-image: url('WhatsApp Image 2026-01-07 at 4.04.10 PM.jpeg');">
+                    <div class="card-main-img" style="background-image: url('trazfront.jpeg');">
                     </div>
+
                     <div class="card-content">
                         <h3 class="card-title">2025 Ultra Luxury Sedan</h3>
                         <div class="card-specs">• 4.0L V8 Hybrid • 550 HP • Advanced AI Infotainment • Panoramic Roof</div>
@@ -681,22 +682,21 @@
         window.dispatchEvent(new Event('scroll'));
 
         // 卡片小图切换主图功能 - 兼容所有卡片
-        document.querySelectorAll('.card-thumbnails').forEach(thumbnailBar => {
-            thumbnailBar.querySelectorAll('.card-thumbnail').forEach((thumbnail, index) => {
-                thumbnail.addEventListener('click', () => {
-                    thumbnailBar.querySelectorAll('.card-thumbnail').forEach(item => {
-                        item.classList.remove('active');
-                    });
-                    thumbnail.classList.add('active');
-                    const mainImg = thumbnail.closest('.car-card').querySelector('.card-main-img');
-                    mainImg.style.opacity = 0;
-                    setTimeout(() => {
-                        // 保留图片切换逻辑，如需给其他角度加图可扩展
-                        mainImg.textContent = ''; // 清空文字
-                        mainImg.style.opacity = 1;
-                    }, 300);
-                });
-            });
+        // 给所有缩略图绑定点击事件
+        document.querySelectorAll('.card-thumbnail').forEach(thumbnail => {
+        thumbnail.addEventListener('click', () => {
+            // 1. 切换“选中状态”（active样式）
+            document.querySelectorAll('.card-thumbnail').forEach(item => item.classList.remove('active'));
+            thumbnail.classList.add('active');
+
+            // 2. 获取Angle 2对应的图片路径
+            const angle2Img = thumbnail.getAttribute('data-img');
+
+            // 3. 把主图替换成Angle 2的照片（假设主图容器类名是card-main-img）
+            const mainImgContainer = thumbnail.closest('.car-card').querySelector('.card-main-img');
+            mainImgContainer.style.backgroundImage = `url('${angle2Img}')`;
+            // （如果是<img>标签，改成：mainImgContainer.querySelector('img').src = angle2Img;）
+        });
         });
     </script>
 </body>
