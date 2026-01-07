@@ -34,40 +34,48 @@
             background-color: rgba(10, 25, 47, 0.9);
             color: #e6f1ff;
             padding: 1rem 2rem;
+            /* 核心修改：优化布局，确保按钮优先级 */
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 1rem; /* 增加间距防止挤压 */
             z-index: 1000;
-            transition: all 0.3s ease-out; /* 优化：缩短动画时长，简化曲线 */
+            transition: all 0.3s ease-out;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            will-change: background-color, box-shadow; /* 性能优化：提前告知浏览器将要变化的属性 */
-            overflow: visible; /* 新增：避免导航栏内元素被裁剪 */
+            will-change: background-color, box-shadow;
+            overflow: visible;
+            /* 新增：最小高度确保内容不被压缩 */
+            min-height: 60px;
         }
 
-        /* Logo容器样式 */
+        /* Logo容器样式 - 核心修改：弹性收缩 */
         .logo-container {
             display: flex;
             align-items: center;
-            gap: clamp(0.5rem, 1vw, 1rem); /* 响应式间距 */
-            will-change: transform; /* 性能优化 */
-            backface-visibility: hidden; /* 防止闪烁 */
+            gap: clamp(0.3rem, 0.8vw, 0.8rem);
+            will-change: transform;
+            backface-visibility: hidden;
+            /* 关键：允许logo容器收缩，优先显示按钮 */
+            flex: 1;
+            min-width: 0; /* 允许子元素收缩 */
         }
 
-        /* Logo图片样式 - 核心性能优化 */
+        /* Logo图片样式 - 核心性能优化 + 小屏尺寸调整 */
         .navbar-logo {
-            height: clamp(2rem, 4vw, 2.5rem); /* 响应式高度 */
-            width: auto; /* 保持宽高比 */
+            height: clamp(1.5rem, 3vw, 2.5rem); /* 降低最小高度 */
+            width: auto;
             object-fit: contain;
-            /* 性能优化：简化动画，缩短时长，使用硬件加速 */
-            transition: transform 0.2s ease-out; 
-            transform: translateZ(0); /* 硬件加速 */
-            backface-visibility: hidden; /* 防止闪烁 */
-            perspective: 1000px; /* 优化3D变换性能 */
+            transition: transform 0.2s ease-out;
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            perspective: 1000px;
+            /* 新增：防止logo挤压 */
+            flex-shrink: 0;
         }
 
         /* 优化：缩小缩放比例，降低性能消耗 */
         .navbar.blur .navbar-logo {
-            transform: scale(1.02); /* 从1.05降到1.02，减少变换幅度 */
+            transform: scale(1.02);
         }
 
         .navbar.blur {
@@ -80,30 +88,35 @@
 
         .navbar h1 {
             color: #f7971e;
-            font-size: clamp(1.2rem, 2vw, 1.8rem); /* 优化：更宽的响应范围 */
+            font-size: clamp(1rem, 1.8vw, 1.8rem); /* 降低最小字号 */
             letter-spacing: 0.8px;
-            transition: all 0.3s ease-out; /* 优化：缩短动画时长 */
-            white-space: nowrap; /* 防止文字换行 */
+            transition: all 0.3s ease-out;
+            white-space: nowrap;
+            /* 关键：文字溢出时隐藏，避免挤压按钮 */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex-shrink: 1;
         }
 
-        /* 苹果风格液态按钮 - 全面优化字体响应式 */
+        /* 苹果风格液态按钮 - 核心修改：优先级提升 */
         .nav-btn {
             background-color: #f7971e;
             color: #0a192f;
             border: none;
-            padding: clamp(0.6rem, 2vw, 0.8rem) clamp(1.2rem, 3vw, 1.8rem);
+            padding: clamp(0.5rem, 1.5vw, 0.8rem) clamp(1rem, 2.5vw, 1.8rem);
             border-radius: 12px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease-out;
             box-shadow: 0 4px 15px rgba(247, 151, 30, 0.2);
             white-space: nowrap;
-            /* 核心优化：字体大小使用更精细的响应式范围 */
-            font-size: clamp(0.9rem, 1.8vw, 1.15rem);
-            line-height: 1.4; /* 增加行高提升可读性 */
-            width: auto;
-            max-width: 90%;
-            display: inline-block;
+            font-size: clamp(0.8rem, 1.5vw, 1.15rem); /* 降低最小字号 */
+            line-height: 1.4;
+            /* 关键：按钮不收缩，优先显示 */
+            flex-shrink: 0;
+            /* 确保按钮最小尺寸 */
+            min-width: 120px;
+            text-align: center;
         }
 
         .nav-btn:hover, .nav-btn:focus {
@@ -137,7 +150,7 @@
             opacity: 1;
             transform: scale(1) translateY(0);
             min-height: 100vh;
-            background-image: url('https://picsum.photos/1920/1080?random=1');
+            background-image: url('imageresize.png');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -185,11 +198,11 @@
             background-color: #ffffff;
             border-radius: clamp(16px, 3vw, 24px);
             margin: clamp(1rem, 4vw, 2rem) auto;
-            padding: clamp(2rem, 5vw, 4rem) clamp(2rem, 3vw, 3rem); /* 增加左右内边距 */
+            padding: clamp(2rem, 5vw, 4rem) clamp(2rem, 3vw, 3rem);
             box-shadow: 0 10px 40px rgba(10, 25, 47, 0.05);
             position: relative;
             z-index: 5;
-            width: 98%; /* 从95%调整为98%，减少边缘裁剪 */
+            width: 98%;
             opacity: 0;
             transform: scale(0.85) translateY(30px);
             transition: all 0.8s ease-out;
@@ -203,19 +216,18 @@
             border: 2px solid #f7971e;
             padding: clamp(0.8rem, 2.5vw, 1.4rem) clamp(1.2rem, 3.5vw, 2.8rem);
             border-radius: clamp(10px, 2vw, 16px);
-            /* 核心优化：字体大小使用更合理的响应式范围 */
             font-size: clamp(0.95rem, 2vw, 1.25rem);
-            line-height: 1.5; /* 增加行高 */
+            line-height: 1.5;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.4s ease-out;
             text-decoration: none;
-            min-width: clamp(160px, 50vw, 200px); /* 增加最小宽度 */
+            min-width: clamp(160px, 50vw, 200px);
             text-align: center;
             display: inline-block;
             box-shadow: 0 6px 20px rgba(10, 25, 47, 0.1);
-            word-wrap: break-word; /* 防止文字溢出 */
-            hyphens: auto; /* 自动连字符 */
+            word-wrap: break-word;
+            hyphens: auto;
         }
 
         .action-btn:hover, .action-btn:focus {
@@ -290,10 +302,9 @@
             justify-content: center;
             color: #64748b;
             cursor: pointer;
-            /* 优化缩略图文字大小 */
             font-size: clamp(0.75rem, 1.4vw, 0.95rem);
             line-height: 1.3;
-            padding: 0 4px; /* 增加内边距防止文字挤压 */
+            padding: 0 4px;
             text-align: center;
             transition: all 0.3s ease-out;
         }
@@ -327,8 +338,8 @@
             padding: clamp(1rem, 2vw, 2rem);
             position: relative;
             min-height: 300px;
-            overflow: hidden; /* 新增：防止内容溢出卡片 */
-            word-wrap: break-word; /* 新增：长文本自动换行 */
+            overflow: hidden;
+            word-wrap: break-word;
         }
 
         .card-title {
@@ -408,20 +419,19 @@
             border: none;
             padding: clamp(0.6rem, 1.2vw, 0.8rem) clamp(0.8rem, 1.8vw, 1.2rem);
             border-radius: clamp(8px, 1.2vw, 10px);
-            /* 核心优化：字体大小使用更精细的响应式范围 */
             font-size: clamp(0.8rem, 1.4vw, 0.95rem);
-            line-height: 1.4; /* 增加行高 */
+            line-height: 1.4;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease-out;
             box-shadow: 0 4px 15px rgba(247, 151, 30, 0.2);
             white-space: nowrap;
             z-index: 10;
-            min-width: 130px; /* 增加最小宽度 */
+            min-width: 130px;
             max-width: calc(100% - 2*clamp(0.8rem, 1.5vw, 1.5rem));
             text-decoration: none;
             display: inline-block;
-            text-align: center; /* 确保文字居中 */
+            text-align: center;
         }
 
         .book-viewing-btn:hover, .book-viewing-btn:focus {
@@ -538,23 +548,25 @@
         }
 
         /* 多层媒体查询 - 为不同尺寸设备提供精准的字体大小 */
-        /* 超小屏手机 (小于360px) */
+        /* 超小屏手机 (小于360px) - 核心优化 */
         @media (max-width: 360px) {
             .navbar {
-                padding: 0.7rem 0.8rem;
+                padding: 0.5rem 0.8rem; /* 减少内边距 */
+                gap: 0.5rem; /* 减少间距 */
             }
             .navbar h1 {
-                font-size: 1rem;
+                font-size: 0.85rem; /* 进一步缩小文字 */
+                letter-spacing: 0.5px;
             }
             .navbar-logo {
-                height: 1.6rem;
+                height: 1.2rem; /* 更小的logo */
             }
-            /* 导航栏按钮 */
+            /* 导航栏按钮 - 优先保证显示 */
             .nav-btn {
-                font-size: 0.85rem;
-                padding: 0.5rem 0.8rem;
-                white-space: normal; /* 允许按钮文字换行 */
-                text-align: center;
+                font-size: 0.75rem; /* 更小的字体 */
+                padding: 0.4rem 0.6rem; /* 减少内边距 */
+                min-width: 100px; /* 最小宽度适配 */
+                border-radius: 8px; /* 更小的圆角 */
             }
             /* 行动按钮 */
             .action-btn {
@@ -578,7 +590,8 @@
         /* 小屏手机 (360px - 480px) */
         @media (min-width: 361px) and (max-width: 480px) {
             .nav-btn {
-                font-size: 0.9rem;
+                font-size: 0.85rem;
+                min-width: 110px;
             }
             .action-btn {
                 font-size: 0.95rem;
@@ -643,7 +656,10 @@
 <body>
     <!-- 固定顶部导航栏 - 添加了Logo容器 -->
     <nav class="navbar" id="navbar">
-        <h1>OSL Auto Sales</h1>
+        <div class="logo-container">
+            <img src="PeroduaLogo.png" alt="Perodua Logo" class="navbar-logo">
+            <h1>OSL Auto Sales</h1>
+        </div>
         <a href="#" class="nav-btn">Contact Our Dealership</a>
     </nav>
 
@@ -664,10 +680,10 @@
                 <!-- 新品卡片1 -->
                 <div class="car-card">
                     <div class="card-thumbnails">
-                        <div class="card-thumbnail active" data-img="trazfront.jpeg"><b>Traz - 1500 x (CVT) Front</b></div>
-                        <div class="card-thumbnail" data-img="trazback.jpeg"><b>Traz - 1500 x (CVT) Back</b></div>
-                        <div class="card-thumbnail" data-img="trazinterior.jpeg"><b>Traz - 1500 x (CVT) Interior</b></div>
-                        <div class="card-thumbnail" data-img=""><b>Traz - 1500 x (CVT) Interior 2</b></div>
+                        <div class="card-thumbnail active" data-img="trazfront.jpeg"><b>Traz-1500X(CVT) Front</b></div>
+                        <div class="card-thumbnail" data-img="trazback.jpeg"><b>Traz-1500X(CVT) Back</b></div>
+                        <div class="card-thumbnail" data-img="trazinterior.jpeg"><b>Traz-1500X(CVT) Interior</b></div>
+                        <div class="card-thumbnail" data-img=""><b>Traz-1500X(CVT) Interior 2</b></div>
                     </div>
                     <div class="card-main-img" style="background-image: url('trazfront.jpeg');">
                     </div>
@@ -694,10 +710,10 @@
                 <!-- 新品卡片2 -->
                 <div class="car-card">
                     <div class="card-thumbnails">
-                        <div class="card-thumbnail active" data-img="">Traz - 1500 H (CVT) Front</div>
-                        <div class="card-thumbnail" data-img="">Traz - 1500 H (CVT) Back</div>
-                        <div class="card-thumbnail" data-img="">Traz - 1500 H (CVT) Interior</div>
-                        <div class="card-thumbnail" data-img="">Traz - 1500 H (CVT) Interior 2</div>
+                        <div class="card-thumbnail active" data-img="">Traz-1500H(CVT) Front</div>
+                        <div class="card-thumbnail" data-img="">Traz-1500H(CVT) Back</div>
+                        <div class="card-thumbnail" data-img="">Traz-1500H(CVT) Interior</div>
+                        <div class="card-thumbnail" data-img="">Traz-1500H(CVT) Interior 2</div>
                     </div>
                     <div class="card-main-img" style="background-image: url('#');"></div>
                     <div class="card-content">
@@ -816,12 +832,12 @@
                 <!-- 汽车卡片4 -->
                 <div class="car-card">
                     <div class="card-thumbnails">
-                        <div class="card-thumbnail active"data-img="">Axia Front</div>
-                        <div class="card-thumbnail" data-img="">Axia Back</div>
-                        <div class="card-thumbnail" data-img="">Axia Interior</div>
-                        <div class="card-thumbnail" data-img="">Axia Interior 2</div>
+                        <div class="card-thumbnail active"data-img="axiafront.jpeg">Axia Front</div>
+                        <div class="card-thumbnail" data-img="axiaback.jpeg">Axia Back</div>
+                        <div class="card-thumbnail" data-img="axiainterior.jpeg">Axia Interior</div>
+                        <div class="card-thumbnail" data-img="axiainterior2.jpeg">Axia Interior 2</div>
                     </div>
-                    <div class="card-main-img" style="background-image: url('#');"></div>
+                    <div class="card-main-img" style="background-image: url('axiafront.jpeg');"></div>
                     <div class="card-content">
                         <h3 class="card-title">Perodua Axia</h3>
                         <div class="card-specs">Performances TBA</div>
