@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Premium Automotive Showcase</title>
+    <link rel="icon" type="image/x-icon" href="peroduaiconfavicon.png">
     <style>
         /* 全局样式重置 */
         * {
@@ -17,6 +18,11 @@
         body {
             overflow-x: hidden;
             background-color: #fafafa;
+        }
+
+        /* 关键修复：移除所有a标签的下划线 */
+        a {
+            text-decoration: none;
         }
 
         /* 固定顶部导航栏 - 苹果液态雾化效果 */
@@ -36,6 +42,25 @@
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
+        /* Logo容器样式 */
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: clamp(0.5rem, 1vw, 1rem); /* 响应式间距 */
+        }
+
+        /* Logo图片样式 */
+        .navbar-logo {
+            height: clamp(2rem, 4vw, 2.5rem); /* 响应式高度 */
+            width: auto; /* 保持宽高比 */
+            object-fit: contain;
+            transition: all 0.6s ease;
+        }
+
+        .navbar.blur .navbar-logo {
+            transform: scale(1.05); /* 雾化时轻微放大 */
+        }
+
         .navbar.blur {
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
@@ -49,19 +74,25 @@
             font-size: 1.5rem;
             letter-spacing: 0.8px;
             transition: all 0.8s ease;
+            white-space: nowrap; /* 防止文字换行 */
         }
 
-        /* 苹果风格液态按钮 */
+        /* 苹果风格液态按钮 - 修复移动端尺寸问题 */
         .nav-btn {
             background-color: #f7971e;
             color: #0a192f;
             border: none;
-            padding: 0.7rem 1.4rem;
+            padding: clamp(0.5rem, 1.5vw, 0.7rem) clamp(1rem, 3vw, 1.4rem);
             border-radius: 12px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
             box-shadow: 0 4px 15px rgba(247, 151, 30, 0.2);
+            white-space: nowrap;
+            font-size: clamp(0.8rem, 1.8vw, 1rem);
+            width: auto;
+            max-width: 90%;
+            display: inline-block; /* 确保按钮样式正确 */
         }
 
         .nav-btn:hover, .nav-btn:focus {
@@ -148,14 +179,35 @@
             position: relative;
             z-index: 5;
             width: 95%;
+            opacity: 0;
+            transform: scale(0.85) translateY(30px);
+            transition: all 1.5s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
-        .product-section h2 {
-            font-size: clamp(1.8rem, 4vw, 2.5rem);
-            color: #0a192f;
-            margin-bottom: clamp(1.5rem, 4vw, 3rem);
+        /* 行动按钮样式 */
+        .action-btn {
+            background-color: #0a192f;
+            color: #ffffff;
+            border: 2px solid #f7971e;
+            padding: clamp(0.6rem, 2vw, 1.2rem) clamp(1rem, 3vw, 2.5rem);
+            border-radius: clamp(10px, 2vw, 16px);
+            font-size: clamp(0.8rem, 1.8vw, 1.15rem);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+            text-decoration: none; /* 确保没有下划线 */
+            min-width: clamp(140px, 50vw, 180px);
             text-align: center;
-            font-weight: 700;
+            display: inline-block;
+            box-shadow: 0 6px 20px rgba(10, 25, 47, 0.1);
+        }
+
+        .action-btn:hover, .action-btn:focus {
+            background-color: #f7971e;
+            color: #0a192f;
+            outline: none;
+            transform: translateY(-4px) scale(1.03);
+            box-shadow: 0 12px 30px rgba(247, 151, 30, 0.25);
         }
 
         /* 卡片容器 - 响应式滚动优化 */
@@ -237,17 +289,23 @@
 
         /* 卡片主图区域 - 高度响应式 + 图片适配 */
         .card-main-img {
-            width: 100%;       /* 占满父容器宽度 */
-            aspect-ratio: 15/9; /* 强制1:1正方形比例 */
-            object-fit: cover; /* 图片铺满容器且不变形（如果是<img>标签，给<img>加这个样式） */
-            background-size: cover; /* 如果是背景图，加这个 */
-            background-position: center; /* 背景图居中 */
-            overflow: hidden;  /* 裁剪超出部分 */
+            width: 100%;
+            aspect-ratio: 15/9;
+            object-fit: cover;
+            background-size: cover;
+            background-position: center;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
         }
 
         /* 卡片内容区域 - 内边距适配 */
         .card-content {
             padding: clamp(1rem, 2vw, 2rem);
+            position: relative;
+            min-height: 300px;
         }
 
         .card-title {
@@ -255,7 +313,7 @@
             font-weight: 700;
             color: #0a192f;
             margin-bottom: clamp(0.5rem, 1vw, 1rem);
-            border-bottom: 2px solid #f7971e;
+            /* 移除了底部边框：border-bottom: 2px solid #f7971e; */
             padding-bottom: clamp(0.4rem, 1vw, 0.8rem);
             display: inline-block;
         }
@@ -274,7 +332,6 @@
             margin-bottom: clamp(1rem, 1.5vw, 1.5rem);
         }
 
-        /* 价格样式 - 响应式字号 */
         .card-price {
             font-size: clamp(1.2rem, 2.5vw, 1.6rem);
             font-weight: 700;
@@ -291,7 +348,6 @@
             font-weight: 400;
         }
 
-        /* 热门度星级样式 - 大小适配 */
         .card-rating {
             display: flex;
             align-items: center;
@@ -320,13 +376,43 @@
             color: #f7971e;
         }
 
+        /* 核心修复：产品卡片右下角预约看车按钮 - 全响应式优化 */
+        .book-viewing-btn {
+            position: absolute;
+            bottom: clamp(0.8rem, 1.5vw, 1.5rem); /* 响应式底部间距 */
+            right: clamp(0.8rem, 1.5vw, 1.5rem);  /* 响应式右侧间距 */
+            background-color: #f7971e;
+            color: #0a192f;
+            border: none;
+            padding: clamp(0.4rem, 1vw, 0.6rem) clamp(0.6rem, 1.5vw, 1rem); /* 小屏更小内边距 */
+            border-radius: clamp(8px, 1.2vw, 10px); /* 响应式圆角 */
+            font-size: clamp(0.7rem, 1.2vw, 0.85rem); /* 小屏更小字体 */
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 4px 15px rgba(247, 151, 30, 0.2);
+            white-space: nowrap;
+            z-index: 10;
+            min-width: 120px; /* 保证最小点击区域 */
+            max-width: calc(100% - 2*clamp(0.8rem, 1.5vw, 1.5rem)); /* 不超出卡片 */
+            text-decoration: none; /* 确保没有下划线 */
+            display: inline-block;
+        }
+
+        .book-viewing-btn:hover, .book-viewing-btn:focus {
+            background-color: #ffb74d;
+            outline: none;
+            transform: translateY(-2px) scale(1.03); /* 小屏更克制的缩放 */
+            box-shadow: 0 6px 20px rgba(247, 151, 30, 0.3);
+        }
+
         /* 页面3：地址和联系按钮页 */
         .page-3 {
             padding-top: clamp(60px, 10vw, 100px);
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: clamp(2rem, 5vw, 4rem);
-            align-items: center;
+            align-items: start; /* 修改为start避免地图容器被拉伸 */
             position: relative;
             z-index: 5;
             width: 95%;
@@ -340,6 +426,7 @@
             border-radius: clamp(16px, 3vw, 24px);
             box-shadow: 0 12px 40px rgba(10, 25, 47, 0.15);
             transition: all 1s ease;
+            width: 100%;
         }
 
         .dealer-location:hover {
@@ -357,11 +444,28 @@
             font-size: clamp(0.9rem, 2vw, 1.2rem);
             line-height: 1.8;
             color: #94a3b8;
-            margin-bottom: clamp(0.5rem, 1vw, 0.8rem);
+            margin-bottom: clamp(1rem, 2vw, 1.5rem); /* 增加底部间距 */
+        }
+
+        /* 谷歌地图容器样式 - 关键修复 */
+        .map-container {
+            width: 100%;
+            height: clamp(300px, 40vw, 450px); /* 响应式高度 */
+            border-radius: clamp(8px, 1vw, 12px);
+            overflow: hidden;
+            margin-bottom: clamp(1rem, 2vw, 1.5rem);
+        }
+
+        /* 响应式谷歌地图iframe */
+        .map-container iframe {
+            width: 100% !important;
+            height: 100% !important;
+            border: 0;
         }
 
         .action-section {
             text-align: center;
+            padding: clamp(1.5rem, 3vw, 3rem);
         }
 
         .action-section h2 {
@@ -376,32 +480,6 @@
             gap: clamp(1.5rem, 3vw, 2.5rem);
             justify-content: center;
             flex-wrap: wrap;
-        }
-
-        /* 苹果液态风格按钮 */
-        .action-btn {
-            background-color: #0a192f;
-            color: #ffffff;
-            border: 2px solid #f7971e;
-            padding: clamp(0.8rem, 2vw, 1.2rem) clamp(1.5rem, 4vw, 2.5rem);
-            border-radius: clamp(10px, 2vw, 16px);
-            font-size: clamp(0.9rem, 1.8vw, 1.15rem);
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.7s cubic-bezier(0.23, 1, 0.32, 1);
-            text-decoration: none;
-            min-width: 180px;
-            text-align: center;
-            display: inline-block;
-            box-shadow: 0 6px 20px rgba(10, 25, 47, 0.1);
-        }
-
-        .action-btn:hover, .action-btn:focus {
-            background-color: #f7971e;
-            color: #0a192f;
-            outline: none;
-            transform: translateY(-4px) scale(1.03);
-            box-shadow: 0 12px 30px rgba(247, 151, 30, 0.25);
         }
 
         /* 新增：仿造内容预留区 */
@@ -433,21 +511,55 @@
         .page-1-blur {
             transition: all 1.8s ease-out !important;
         }
+
+        /* 媒体查询：针对小屏手机的额外优化（兜底） */
+        @media (max-width: 420px) {
+            .navbar {
+                padding: 0.8rem 1rem;
+            }
+            .navbar h1 {
+                font-size: 1.2rem;
+            }
+            /* 小屏Logo缩小 */
+            .navbar-logo {
+                height: 1.8rem;
+            }
+            .action-buttons {
+                gap: 1rem;
+            }
+            /* 小屏强制按钮更紧凑 */
+            .book-viewing-btn {
+                padding: 0.4rem 0.6rem;
+                font-size: 0.7rem;
+                min-width: 110px;
+            }
+            /* 卡片内容区增加底部内边距，避免按钮遮挡 */
+            .card-content {
+                padding-bottom: 3.5rem;
+            }
+            /* 小屏地图高度调整 */
+            .map-container {
+                height: 250px;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- 固定顶部导航栏 -->
+    <!-- 固定顶部导航栏 - 添加了Logo容器 -->
     <nav class="navbar" id="navbar">
-        <h1>OSL AutoSales</h1>
+        <div class="logo-container">
+            <img src="PeroduaLogo.png" alt="Perodua Logo" class="navbar-logo">
+            <h1>OSL Auto Sales</h1>
+        </div>
         <a href="#" class="nav-btn">Contact Our Dealership</a>
     </nav>
 
     <!-- 页面1：品牌介绍页 -->
     <section class="page page-1 page-1-blur" id="page1">
         <div class="brand-intro">
-            <h2>Exceptional Automotive<br>Excellence</h2>
-            <p>At our dealership, we curate only the finest selection of premium vehicles, combining cutting-edge technology, superior performance, and timeless design.</p>
-            <p>Each vehicle in our collection undergoes rigorous inspection to ensure unparalleled quality and driving experience. Discover the perfect blend of luxury and performance with our handpicked automotive lineup.</p>
+            <h2>About Us<br>Helping you get your dream car</h2>
+            <p>Describe</p>
+            <p>Describe</p>
         </div>
     </section>
 
@@ -456,22 +568,22 @@
         <h2>New Arrivals • Fresh Off The Line</h2>
         <div class="card-container">
             <div class="card-track">
-                <!-- 新品卡片1 - 替换Angle 1为指定图片 -->
+                <!-- 新品卡片1 -->
                 <div class="car-card">
                     <div class="card-thumbnails">
-                        <div class="card-thumbnail active" data-img="trazfront.jpeg"><b>Perodua Traz Front</b></div>
-                        <div class="card-thumbnail" data-img="trazback.jpeg"><b>Perodua Traz Back</b></div>
-                        <div class="card-thumbnail" data-img="trazinterior.jpeg"><b>Perodua Traz Interior</b></div>
-                        <div class="card-thumbnail"><b>Perodua Traz</b></div>
+                        <div class="card-thumbnail active" data-img="trazfront.jpeg"><b>Traz - 1500 x (CVT) Front</b></div>
+                        <div class="card-thumbnail" data-img="trazback.jpeg"><b>Traz - 1500 x (CVT) Back</b></div>
+                        <div class="card-thumbnail" data-img="trazinterior.jpeg"><b>Traz - 1500 x (CVT) Interior</b></div>
+                        <div class="card-thumbnail" data-img=""><b>Traz - 1500 x (CVT) Interior 2</b></div>
                     </div>
                     <div class="card-main-img" style="background-image: url('trazfront.jpeg');">
                     </div>
 
                     <div class="card-content">
-                        <h3 class="card-title">2025 Ultra Luxury Sedan</h3>
-                        <div class="card-specs">• 4.0L V8 Hybrid • 550 HP • Advanced AI Infotainment • Panoramic Roof</div>
-                        <p class="card-desc">The all-new 2025 flagship sedan, featuring next-gen hybrid technology and a handcrafted interior with premium materials.</p>
-                        <div class="card-price">$159,995 <span>MSRP</span></div>
+                        <h3 class="card-title">Perodua Traz - 1500 X (CVT)</h3>
+                        <div class="card-specs">Performances TBA</div>
+                        <p class="card-desc">Basic description TBA</p>
+                        <div class="card-price">FROM RM75,780.00<span>MYR</span></div>
                         <div class="card-rating">
                             <span class="rating-label">New Release:</span>
                             <div class="stars">
@@ -482,22 +594,24 @@
                                 <span class="star filled">★</span>
                             </div>
                         </div>
+                        <!-- 预约看车按钮 -->
+                        <a href="#" class="book-viewing-btn">Contact Us to Book a Viewing</a>
                     </div>
                 </div>
                 <!-- 新品卡片2 -->
                 <div class="car-card">
                     <div class="card-thumbnails">
-                        <div class="card-thumbnail active">Angle 1</div>
-                        <div class="card-thumbnail">Angle 2</div>
-                        <div class="card-thumbnail">Interior</div>
-                        <div class="card-thumbnail">Battery</div>
+                        <div class="card-thumbnail active" data-img="">Traz - 1500 H (CVT) Front</div>
+                        <div class="card-thumbnail" data-img="">Traz - 1500 H (CVT) Back</div>
+                        <div class="card-thumbnail" data-img="">Traz - 1500 H (CVT) Interior</div>
+                        <div class="card-thumbnail" data-img="">Traz - 1500 H (CVT) Interior 2</div>
                     </div>
-                    <div class="card-main-img">2025 EV Hypercar</div>
+                    <div class="card-main-img" style="background-image: url('#');"></div>
                     <div class="card-content">
-                        <h3 class="card-title">2025 EV Hypercar</h3>
-                        <div class="card-specs">• Quad Electric Motors • 1200 HP • 400 Mile Range • 0-60 in 1.9s</div>
-                        <p class="card-desc">The fastest electric hypercar ever produced, with race-inspired aerodynamics and a carbon fiber monocoque chassis.</p>
-                        <div class="card-price">$899,995 <span>MSRP</span></div>
+                        <h3 class="card-title">Perodua Traz - 1500 H (CVT)</h3>
+                        <div class="card-specs">Performances TBA</div>
+                        <p class="card-desc">Basic description TBA</p>
+                        <div class="card-price">TBA<span>MYR</span></div>
                         <div class="card-rating">
                             <span class="rating-label">New Release:</span>
                             <div class="stars">
@@ -508,6 +622,8 @@
                                 <span class="star filled">★</span>
                             </div>
                         </div>
+                        <!-- 预约看车按钮 -->
+                        <a href="#" class="book-viewing-btn">Contact Us to Book a Viewing</a>
                     </div>
                 </div>
             </div>
@@ -522,17 +638,17 @@
                 <!-- 汽车卡片1 -->
                 <div class="car-card">
                     <div class="card-thumbnails">
-                        <div class="card-thumbnail active">Angle 1</div>
-                        <div class="card-thumbnail">Angle 2</div>
-                        <div class="card-thumbnail">Interior</div>
-                        <div class="card-thumbnail">Engine</div>
+                        <div class="card-thumbnail active"data-img="">Ativa Front</div>
+                        <div class="card-thumbnail" data-img="">Ativa Back</div>
+                        <div class="card-thumbnail" data-img="">Ativa Interior</div>
+                        <div class="card-thumbnail" data-img="">Ativa Interior 2</div>
                     </div>
-                    <div class="card-main-img">Luxury Sedan - Main Image</div>
+                    <div class="card-main-img" style="background-image: url('#');"></div>
                     <div class="card-content">
-                        <h3 class="card-title">Executive Luxury Sedan</h3>
-                        <div class="card-specs">• 3.0L Twin-Turbo V6 • 425 HP • All-Wheel Drive • Premium Leather Interior</div>
-                        <p class="card-desc">This executive sedan redefines luxury with its sophisticated design, state-of-the-art infotainment system, and smooth, powerful performance.</p>
-                        <div class="card-price">$125,995 <span>MSRP</span></div>
+                        <h3 class="card-title">Perodua Ativa</h3>
+                        <div class="card-specs">Performances TBA</div>
+                        <p class="card-desc">Basic Description TBA</p>
+                        <div class="card-price">TBA<span>MYR</span></div>
                         <div class="card-rating">
                             <span class="rating-label">Popularity:</span>
                             <div class="stars">
@@ -543,22 +659,24 @@
                                 <span class="star">★</span>
                             </div>
                         </div>
+                        <!-- 预约看车按钮 -->
+                        <a href="#" class="book-viewing-btn">Contact Us to Book a Viewing</a>
                     </div>
                 </div>
                 <!-- 汽车卡片2 -->
                 <div class="car-card">
                     <div class="card-thumbnails">
-                        <div class="card-thumbnail active">Angle 1</div>
-                        <div class="card-thumbnail">Angle 2</div>
-                        <div class="card-thumbnail">Interior</div>
-                        <div class="card-thumbnail">Suspension</div>
+                        <div class="card-thumbnail active"data-img="">Myvi Front</div>
+                        <div class="card-thumbnail" data-img="">Myvi Back</div>
+                        <div class="card-thumbnail" data-img="">Myvi Interior</div>
+                        <div class="card-thumbnail" data-img="">Myvi Interior 2</div>
                     </div>
-                    <div class="card-main-img">Sport SUV - Main Image</div>
+                    <div class="card-main-img" style="background-image: url('#');"></div>
                     <div class="card-content">
-                        <h3 class="card-title">Performance Sport SUV</h3>
-                        <div class="card-specs">• 4.4L V8 Engine • 600 HP • Adaptive Suspension • Carbon Fiber Accents</div>
-                        <p class="card-desc">Blending rugged capability with sports car performance, this SUV delivers exhilarating driving dynamics without compromising on space or comfort.</p>
-                        <div class="card-price">$189,495 <span>MSRP</span></div>
+                        <h3 class="card-title">Perodua Myvi</h3>
+                        <div class="card-specs">Performances TBA</div>
+                        <p class="card-desc">Basic Description TBA</p>
+                        <div class="card-price">TBA<span>MYR</span></div>
                         <div class="card-rating">
                             <span class="rating-label">Popularity:</span>
                             <div class="stars">
@@ -566,25 +684,27 @@
                                 <span class="star filled">★</span>
                                 <span class="star filled">★</span>
                                 <span class="star filled">★</span>
-                                <span class="star filled">★</span>
+                                <span class="star">★</span>
                             </div>
                         </div>
+                        <!-- 预约看车按钮 -->
+                        <a href="#" class="book-viewing-btn">Contact Us to Book a Viewing</a>
                     </div>
                 </div>
                 <!-- 汽车卡片3 -->
                 <div class="car-card">
                     <div class="card-thumbnails">
-                        <div class="card-thumbnail active">Angle 1</div>
-                        <div class="card-thumbnail">Angle 2</div>
-                        <div class="card-thumbnail">Interior</div>
-                        <div class="card-thumbnail">Battery</div>
+                        <div class="card-thumbnail active"data-img="">Bezza Front</div>
+                        <div class="card-thumbnail" data-img="">Bezza Back</div>
+                        <div class="card-thumbnail" data-img="">Bezza Interior</div>
+                        <div class="card-thumbnail" data-img="">Bezza Interior 2</div>
                     </div>
-                    <div class="card-main-img">Electric Coupe - Main Image</div>
+                    <div class="card-main-img" style="background-image: url('#');"></div>
                     <div class="card-content">
-                        <h3 class="card-title">Electric Performance Coupe</h3>
-                        <div class="card-specs">• Dual Electric Motors • 750 HP • 300 Mile Range • Autonomous Driving</div>
-                        <p class="card-desc">The future of performance driving is here. This all-electric coupe offers instant torque, zero emissions, and groundbreaking technology.</p>
-                        <div class="card-price">$219,995 <span>MSRP</span></div>
+                        <h3 class="card-title">Perodua Bezza</h3>
+                        <div class="card-specs">Performances TBA</div>
+                        <p class="card-desc">Basic Description TBA</p>
+                        <div class="card-price">TBA<span>MYR</span></div>
                         <div class="card-rating">
                             <span class="rating-label">Popularity:</span>
                             <div class="stars">
@@ -592,9 +712,97 @@
                                 <span class="star filled">★</span>
                                 <span class="star filled">★</span>
                                 <span class="star filled">★</span>
-                                <span class="star filled">☆</span>
+                                <span class="star">★</span>
                             </div>
                         </div>
+                        <!-- 预约看车按钮 -->
+                        <a href="#" class="book-viewing-btn">Contact Us to Book a Viewing</a>
+                    </div>
+                </div> 
+                
+                <!-- 汽车卡片4 -->
+                <div class="car-card">
+                    <div class="card-thumbnails">
+                        <div class="card-thumbnail active"data-img="">Axia Front</div>
+                        <div class="card-thumbnail" data-img="">Axia Back</div>
+                        <div class="card-thumbnail" data-img="">Axia Interior</div>
+                        <div class="card-thumbnail" data-img="">Axia Interior 2</div>
+                    </div>
+                    <div class="card-main-img" style="background-image: url('#');"></div>
+                    <div class="card-content">
+                        <h3 class="card-title">Perodua Axia</h3>
+                        <div class="card-specs">Performances TBA</div>
+                        <p class="card-desc">Basic Description TBA</p>
+                        <div class="card-price">TBA<span>MYR</span></div>
+                        <div class="card-rating">
+                            <span class="rating-label">Popularity:</span>
+                            <div class="stars">
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                                <span class="star">★</span>
+                            </div>
+                        </div>
+                        <!-- 预约看车按钮 -->
+                        <a href="#" class="book-viewing-btn">Contact Us to Book a Viewing</a>
+                    </div>
+                </div>
+                <!-- 汽车卡片5 -->
+                <div class="car-card">
+                    <div class="card-thumbnails">
+                        <div class="card-thumbnail active"data-img="">Alza Front</div>
+                        <div class="card-thumbnail" data-img="">Alza Back</div>
+                        <div class="card-thumbnail" data-img="">Alza Interior</div>
+                        <div class="card-thumbnail" data-img="">Alza Interior 2</div>
+                    </div>
+                    <div class="card-main-img" style="background-image: url('#');"></div>
+                    <div class="card-content">
+                        <h3 class="card-title">Perodua Alza</h3>
+                        <div class="card-specs">Performances TBA</div>
+                        <p class="card-desc">Basic Description TBA</p>
+                        <div class="card-price">TBA<span>MYR</span></div>
+                        <div class="card-rating">
+                            <span class="rating-label">Popularity:</span>
+                            <div class="stars">
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                                <span class="star">★</span>
+                            </div>
+                        </div>
+                        <!-- 预约看车按钮 -->
+                        <a href="#" class="book-viewing-btn">Contact Us to Book a Viewing</a>
+                    </div>
+                </div>  
+
+                <!-- 汽车卡片6 -->
+                <div class="car-card">
+                    <div class="card-thumbnails">
+                        <div class="card-thumbnail active"data-img="">Aruz Front</div>
+                        <div class="card-thumbnail" data-img="">Aruz Back</div>
+                        <div class="card-thumbnail" data-img="">Aruz Interior</div>
+                        <div class="card-thumbnail" data-img="">Aruz Interior 2</div>
+                    </div>
+                    <div class="card-main-img" style="background-image: url('#');"></div>
+                    <div class="card-content">
+                        <h3 class="card-title">Perodua Aruz</h3>
+                        <div class="card-specs">Performances TBA</div>
+                        <p class="card-desc">Basic Description TBA</p>
+                        <div class="card-price">TBA<span>MYR</span></div>
+                        <div class="card-rating">
+                            <span class="rating-label">Popularity:</span>
+                            <div class="stars">
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                                <span class="star">★</span>
+                            </div>
+                        </div>
+                        <!-- 预约看车按钮 -->
+                        <a href="#" class="book-viewing-btn">Contact Us to Book a Viewing</a>
                     </div>
                 </div>
             </div>
@@ -605,15 +813,22 @@
     <section class="page page-3" id="page3">
         <div class="dealer-location">
             <h2>Our Dealership Location</h2>
-            <p>Google Maps Address: 456 Luxury Auto Blvd, Beverly Hills, CA 90210, United States</p>
+            <p>Google Maps Address:Lot 91517, Persiaran Atmosfera, Seksyen U5, 40150 Shah Alam, Selangor</p>
             <p>Visit our state-of-the-art showroom to experience our premium vehicles in person. Our knowledgeable staff are available 7 days a week to assist you with your automotive needs.</p>
-            <p>Google Maps Link: <a href="#" style="color: #f7971e; text-decoration: underline;">View on Google Maps</a></p>
+            
+            <!-- 包裹地图的容器 - 关键修改 -->
+            <div class="map-container">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3983.6573965510693!2d101.53802499999999!3d3.18449!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31cc4ffab3a2f8eb%3A0x1d6cf2693348e5ca!2sPerodua%203S%20Elmina%20(ROHAMAS%20PRO%20AUTOSERV%20SDN%20BHD)!5e0!3m2!1sen!2smy!4v1767798907426!5m2!1sen!2smy" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+            
+            <p>Google Maps Link: <a href="https://maps.app.goo.gl/uYvspF8sC5LLbFtt9" style="color: #f7971e; text-decoration: underline;">View on Google Maps</a></p>
         </div>
         <div class="action-section">
             <h2>Get In Touch With Us</h2>
             <div class="action-buttons">
                 <a href="#" class="action-btn">Request a Quote (Google Form)</a>
                 <a href="#" class="action-btn">Contact Our Sales Team</a>
+                <a href="#" class="action-btn">More car images (testing phase unstable)</a>
             </div>
         </div>
     </section>
@@ -624,7 +839,6 @@
         const pages = document.querySelectorAll('.page');
         const page1 = document.getElementById('page1');
         const page3 = document.getElementById('page3');
-        // 新增：新品和经典产品展示框的滚动监听
         const newProducts = document.getElementById('new-products');
         const classicProducts = document.getElementById('classic-products');
 
@@ -682,21 +896,14 @@
         window.dispatchEvent(new Event('scroll'));
 
         // 卡片小图切换主图功能 - 兼容所有卡片
-        // 给所有缩略图绑定点击事件
         document.querySelectorAll('.card-thumbnail').forEach(thumbnail => {
-        thumbnail.addEventListener('click', () => {
-            // 1. 切换“选中状态”（active样式）
-            document.querySelectorAll('.card-thumbnail').forEach(item => item.classList.remove('active'));
-            thumbnail.classList.add('active');
-
-            // 2. 获取Angle 2对应的图片路径
-            const angle2Img = thumbnail.getAttribute('data-img');
-
-            // 3. 把主图替换成Angle 2的照片（假设主图容器类名是card-main-img）
-            const mainImgContainer = thumbnail.closest('.car-card').querySelector('.card-main-img');
-            mainImgContainer.style.backgroundImage = `url('${angle2Img}')`;
-            // （如果是<img>标签，改成：mainImgContainer.querySelector('img').src = angle2Img;）
-        });
+            thumbnail.addEventListener('click', () => {
+                document.querySelectorAll('.card-thumbnail').forEach(item => item.classList.remove('active'));
+                thumbnail.classList.add('active');
+                const angle2Img = thumbnail.getAttribute('data-img');
+                const mainImgContainer = thumbnail.closest('.car-card').querySelector('.card-main-img');
+                mainImgContainer.style.backgroundImage = `url('${angle2Img}')`;
+            });
         });
     </script>
 </body>
