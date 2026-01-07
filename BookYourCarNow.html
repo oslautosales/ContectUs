@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Automotive Showcase</title>
+    <style>
+        /* 全局样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'SF Pro Display', 'Segoe UI', 'Roboto', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            overflow-x: hidden;
+            background-color: #fafafa;
+        }
+
+        /* 固定顶部导航栏 - 苹果液态雾化效果 */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: rgba(10, 25, 47, 0.9);
+            color: #e6f1ff;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            transition: all 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .navbar.blur {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            background-color: rgba(10, 25, 47, 0.6);
+            transform: translateY(0) scale(1.002);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+        }
+
+        .navbar h1 {
+            color: #f7971e;
+            font-size: 1.5rem;
+            letter-spacing: 0.8px;
+            transition: all 0.8s ease;
+        }
+
+        /* 苹果风格液态按钮 */
+        .nav-btn {
+            background-color: #f7971e;
+            color: #0a192f;
+            border: none;
+            padding: 0.7rem 1.4rem;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 4px 15px rgba(247, 151, 30, 0.2);
+        }
+
+        .nav-btn:hover, .nav-btn:focus {
+            background-color: #ffb74d;
+            outline: none;
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(247, 151, 30, 0.35);
+        }
+
+        /* 三大页面容器 - 苹果液态动画 */
+        .page {
+            min-height: 100vh;
+            padding: clamp(60px, 10vw, 120px) clamp(1rem, 3vw, 2rem) clamp(2rem, 5vw, 4rem);
+            max-width: 1600px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            opacity: 0;
+            transform: scale(0.85) translateY(30px);
+            transition: all 1.5s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .page.visible {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+
+        /* 页面1：品牌介绍页 - 渐变背景图 */
+        .page-1 {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            min-height: 100vh;
+            background-image: url('https://picsum.photos/1920/1080?random=1');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            position: relative;
+        }
+
+        .page-1::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to top, rgba(10, 25, 47, 0.95), rgba(10, 25, 47, 0.4));
+            z-index: 1;
+        }
+
+        .brand-intro {
+            position: relative;
+            z-index: 2;
+            max-width: 1100px;
+            padding: 4rem 0;
+        }
+
+        .brand-intro h2 {
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            color: #ffffff;
+            margin-bottom: 2rem;
+            font-weight: 700;
+            line-height: 1.2;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .brand-intro p {
+            font-size: clamp(1rem, 2.5vw, 1.3rem);
+            line-height: 1.8;
+            max-width: 800px;
+            color: #e6f1ff;
+            margin-bottom: 2rem;
+            text-shadow: 0 1px 5px rgba(0, 0, 0, 0.15);
+        }
+
+        /* 通用产品展示框样式 - 新品/经典共用 */
+        .product-section {
+            background-color: #ffffff;
+            border-radius: clamp(16px, 3vw, 24px);
+            margin: clamp(1rem, 4vw, 2rem) auto;
+            padding: clamp(2rem, 5vw, 4rem) clamp(1rem, 3vw, 2rem);
+            box-shadow: 0 10px 40px rgba(10, 25, 47, 0.05);
+            position: relative;
+            z-index: 5;
+            width: 95%;
+        }
+
+        .product-section h2 {
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            color: #0a192f;
+            margin-bottom: clamp(1.5rem, 4vw, 3rem);
+            text-align: center;
+            font-weight: 700;
+        }
+
+        /* 卡片容器 - 响应式滚动优化 */
+        .card-container {
+            width: 100%;
+            margin: 0 auto;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: clamp(1rem, 2vw, 1.5rem);
+            scrollbar-width: thin;
+        }
+
+        .card-container::-webkit-scrollbar {
+            height: clamp(4px, 1vw, 8px);
+        }
+        .card-container::-webkit-scrollbar-thumb {
+            background-color: #e2e8f0;
+            border-radius: 4px;
+        }
+        .card-container::-webkit-scrollbar-track {
+            background-color: #f8fafc;
+        }
+
+        /* 卡片轨道 - 弹性间距 */
+        .card-track {
+            display: flex;
+            gap: clamp(1rem, 3vw, 2rem);
+            padding: 0 clamp(0.5rem, 1vw, 1rem);
+        }
+
+        /* 汽车卡片 - 全设备响应式核心 */
+        .car-card {
+            flex: 0 0 clamp(90%, 90%, 30%); 
+            min-width: 280px;
+            scroll-snap-align: start;
+            background-color: #ffffff;
+            border-radius: clamp(12px, 2vw, 20px);
+            box-shadow: 0 12px 36px rgba(10, 25, 47, 0.08);
+            overflow: hidden;
+            transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .car-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 48px rgba(10, 25, 47, 0.15);
+        }
+
+        /* 卡片顶部小图栏 - 高度适配 */
+        .card-thumbnails {
+            display: flex;
+            height: clamp(50px, 10vw, 80px);
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .card-thumbnail {
+            flex: 1;
+            height: 100%;
+            background-color: #f8fafc;
+            border-right: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            cursor: pointer;
+            font-size: clamp(0.8rem, 1.5vw, 1rem);
+            transition: all 0.6s ease;
+        }
+
+        .card-thumbnail:last-child {
+            border-right: none;
+        }
+
+        .card-thumbnail.active {
+            background-color: #e8f4f8;
+            transform: scale(1.02);
+            color: #0a192f;
+        }
+
+        /* 卡片主图区域 - 高度响应式 + 图片适配 */
+        .card-main-img {
+            width: 100%;       /* 占满父容器宽度 */
+            aspect-ratio: 15/9; /* 强制1:1正方形比例 */
+            object-fit: cover; /* 图片铺满容器且不变形（如果是<img>标签，给<img>加这个样式） */
+            background-size: cover; /* 如果是背景图，加这个 */
+            background-position: center; /* 背景图居中 */
+            overflow: hidden;  /* 裁剪超出部分 */
+        }
+
+        /* 卡片内容区域 - 内边距适配 */
+        .card-content {
+            padding: clamp(1rem, 2vw, 2rem);
+        }
+
+        .card-title {
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            font-weight: 700;
+            color: #0a192f;
+            margin-bottom: clamp(0.5rem, 1vw, 1rem);
+            border-bottom: 2px solid #f7971e;
+            padding-bottom: clamp(0.4rem, 1vw, 0.8rem);
+            display: inline-block;
+        }
+
+        .card-specs {
+            font-size: clamp(0.9rem, 1.8vw, 1.15rem);
+            color: #475569;
+            line-height: 1.8;
+            margin-bottom: clamp(0.5rem, 1vw, 1rem);
+        }
+
+        .card-desc {
+            font-size: clamp(0.9rem, 1.8vw, 1.1rem);
+            color: #334155;
+            line-height: 1.7;
+            margin-bottom: clamp(1rem, 1.5vw, 1.5rem);
+        }
+
+        /* 价格样式 - 响应式字号 */
+        .card-price {
+            font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+            font-weight: 700;
+            color: #f7971e;
+            margin-bottom: clamp(0.5rem, 1vw, 1rem);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-price span {
+            font-size: clamp(0.8rem, 1.5vw, 1rem);
+            color: #64748b;
+            font-weight: 400;
+        }
+
+        /* 热门度星级样式 - 大小适配 */
+        .card-rating {
+            display: flex;
+            align-items: center;
+            gap: clamp(0.5rem, 1vw, 0.8rem);
+            margin-top: clamp(0.5rem, 1vw, 1rem);
+        }
+
+        .rating-label {
+            font-size: clamp(0.9rem, 1.8vw, 1.1rem);
+            color: #475569;
+            font-weight: 600;
+        }
+
+        .stars {
+            display: flex;
+            gap: clamp(0.1rem, 0.3vw, 0.2rem);
+        }
+
+        .star {
+            font-size: clamp(0.9rem, 1.8vw, 1.2rem);
+            color: #e2e8f0;
+            transition: color 0.3s ease;
+        }
+
+        .star.filled {
+            color: #f7971e;
+        }
+
+        /* 页面3：地址和联系按钮页 */
+        .page-3 {
+            padding-top: clamp(60px, 10vw, 100px);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: clamp(2rem, 5vw, 4rem);
+            align-items: center;
+            position: relative;
+            z-index: 5;
+            width: 95%;
+            margin: 0 auto;
+        }
+
+        .dealer-location {
+            padding: clamp(1.5rem, 3vw, 3rem);
+            background-color: #0a192f;
+            color: #e6f1ff;
+            border-radius: clamp(16px, 3vw, 24px);
+            box-shadow: 0 12px 40px rgba(10, 25, 47, 0.15);
+            transition: all 1s ease;
+        }
+
+        .dealer-location:hover {
+            box-shadow: 0 18px 50px rgba(10, 25, 47, 0.25);
+        }
+
+        .dealer-location h2 {
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            margin-bottom: clamp(1rem, 2vw, 1.5rem);
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .dealer-location p {
+            font-size: clamp(0.9rem, 2vw, 1.2rem);
+            line-height: 1.8;
+            color: #94a3b8;
+            margin-bottom: clamp(0.5rem, 1vw, 0.8rem);
+        }
+
+        .action-section {
+            text-align: center;
+        }
+
+        .action-section h2 {
+            font-size: clamp(1.3rem, 3vw, 1.8rem);
+            color: #0a192f;
+            margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+            font-weight: 600;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: clamp(1.5rem, 3vw, 2.5rem);
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* 苹果液态风格按钮 */
+        .action-btn {
+            background-color: #0a192f;
+            color: #ffffff;
+            border: 2px solid #f7971e;
+            padding: clamp(0.8rem, 2vw, 1.2rem) clamp(1.5rem, 4vw, 2.5rem);
+            border-radius: clamp(10px, 2vw, 16px);
+            font-size: clamp(0.9rem, 1.8vw, 1.15rem);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+            text-decoration: none;
+            min-width: 180px;
+            text-align: center;
+            display: inline-block;
+            box-shadow: 0 6px 20px rgba(10, 25, 47, 0.1);
+        }
+
+        .action-btn:hover, .action-btn:focus {
+            background-color: #f7971e;
+            color: #0a192f;
+            outline: none;
+            transform: translateY(-4px) scale(1.03);
+            box-shadow: 0 12px 30px rgba(247, 151, 30, 0.25);
+        }
+
+        /* 新增：仿造内容预留区 */
+        .custom-area {
+            width: 95%;
+            max-width: 1600px;
+            margin: clamp(4rem, 10vw, 8rem) auto;
+            padding: clamp(3rem, 8vw, 6rem);
+            background-color: #ffffff;
+            border-radius: clamp(16px, 3vw, 24px);
+            box-shadow: 0 10px 40px rgba(10, 25, 47, 0.05);
+            border: 2px dashed #f7971e;
+            text-align: center;
+        }
+
+        .custom-area h2 {
+            font-size: clamp(1.5rem, 4vw, 2.2rem);
+            color: #0a192f;
+            margin-bottom: 2rem;
+        }
+
+        .custom-area p {
+            font-size: clamp(1rem, 2vw, 1.3rem);
+            color: #475569;
+            line-height: 1.8;
+        }
+
+        /* 页面1雾化效果 - 慢速度 */
+        .page-1-blur {
+            transition: all 1.8s ease-out !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- 固定顶部导航栏 -->
+    <nav class="navbar" id="navbar">
+        <h1>Premium Automotive Collection</h1>
+        <a href="#" class="nav-btn">Contact Our Dealership</a>
+    </nav>
+
+    <!-- 页面1：品牌介绍页 -->
+    <section class="page page-1 page-1-blur" id="page1">
+        <div class="brand-intro">
+            <h2>Exceptional Automotive<br>Excellence</h2>
+            <p>At our dealership, we curate only the finest selection of premium vehicles, combining cutting-edge technology, superior performance, and timeless design.</p>
+            <p>Each vehicle in our collection undergoes rigorous inspection to ensure unparalleled quality and driving experience. Discover the perfect blend of luxury and performance with our handpicked automotive lineup.</p>
+        </div>
+    </section>
+
+    <!-- 新增：新品展示框 - 与下方产品框样式完全一致 -->
+    <section class="product-section" id="new-products">
+        <h2>New Arrivals • Fresh Off The Line</h2>
+        <div class="card-container">
+            <div class="card-track">
+                <!-- 新品卡片1 - 替换Angle 1为指定图片 -->
+                <div class="car-card">
+                    <div class="card-thumbnails">
+                        <div class="card-thumbnail active">Angle 1</div>
+                        <div class="card-thumbnail">Angle 2</div>
+                        <div class="card-thumbnail">Interior</div>
+                        <div class="card-thumbnail">Tech</div>
+                    </div>
+                    <div class="card-main-img" style="background-image: url('WhatsApp Image 2026-01-07 at 4.04.10 PM.jpeg');">
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">2025 Ultra Luxury Sedan</h3>
+                        <div class="card-specs">• 4.0L V8 Hybrid • 550 HP • Advanced AI Infotainment • Panoramic Roof</div>
+                        <p class="card-desc">The all-new 2025 flagship sedan, featuring next-gen hybrid technology and a handcrafted interior with premium materials.</p>
+                        <div class="card-price">$159,995 <span>MSRP</span></div>
+                        <div class="card-rating">
+                            <span class="rating-label">New Release:</span>
+                            <div class="stars">
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 新品卡片2 -->
+                <div class="car-card">
+                    <div class="card-thumbnails">
+                        <div class="card-thumbnail active">Angle 1</div>
+                        <div class="card-thumbnail">Angle 2</div>
+                        <div class="card-thumbnail">Interior</div>
+                        <div class="card-thumbnail">Battery</div>
+                    </div>
+                    <div class="card-main-img">2025 EV Hypercar</div>
+                    <div class="card-content">
+                        <h3 class="card-title">2025 EV Hypercar</h3>
+                        <div class="card-specs">• Quad Electric Motors • 1200 HP • 400 Mile Range • 0-60 in 1.9s</div>
+                        <p class="card-desc">The fastest electric hypercar ever produced, with race-inspired aerodynamics and a carbon fiber monocoque chassis.</p>
+                        <div class="card-price">$899,995 <span>MSRP</span></div>
+                        <div class="card-rating">
+                            <span class="rating-label">New Release:</span>
+                            <div class="stars">
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 原有：经典产品展示框 -->
+    <section class="product-section" id="classic-products">
+        <h2>Our Premium Vehicle Collection</h2>
+        <div class="card-container">
+            <div class="card-track">
+                <!-- 汽车卡片1 -->
+                <div class="car-card">
+                    <div class="card-thumbnails">
+                        <div class="card-thumbnail active">Angle 1</div>
+                        <div class="card-thumbnail">Angle 2</div>
+                        <div class="card-thumbnail">Interior</div>
+                        <div class="card-thumbnail">Engine</div>
+                    </div>
+                    <div class="card-main-img">Luxury Sedan - Main Image</div>
+                    <div class="card-content">
+                        <h3 class="card-title">Executive Luxury Sedan</h3>
+                        <div class="card-specs">• 3.0L Twin-Turbo V6 • 425 HP • All-Wheel Drive • Premium Leather Interior</div>
+                        <p class="card-desc">This executive sedan redefines luxury with its sophisticated design, state-of-the-art infotainment system, and smooth, powerful performance.</p>
+                        <div class="card-price">$125,995 <span>MSRP</span></div>
+                        <div class="card-rating">
+                            <span class="rating-label">Popularity:</span>
+                            <div class="stars">
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                                <span class="star">★</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 汽车卡片2 -->
+                <div class="car-card">
+                    <div class="card-thumbnails">
+                        <div class="card-thumbnail active">Angle 1</div>
+                        <div class="card-thumbnail">Angle 2</div>
+                        <div class="card-thumbnail">Interior</div>
+                        <div class="card-thumbnail">Suspension</div>
+                    </div>
+                    <div class="card-main-img">Sport SUV - Main Image</div>
+                    <div class="card-content">
+                        <h3 class="card-title">Performance Sport SUV</h3>
+                        <div class="card-specs">• 4.4L V8 Engine • 600 HP • Adaptive Suspension • Carbon Fiber Accents</div>
+                        <p class="card-desc">Blending rugged capability with sports car performance, this SUV delivers exhilarating driving dynamics without compromising on space or comfort.</p>
+                        <div class="card-price">$189,495 <span>MSRP</span></div>
+                        <div class="card-rating">
+                            <span class="rating-label">Popularity:</span>
+                            <div class="stars">
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 汽车卡片3 -->
+                <div class="car-card">
+                    <div class="card-thumbnails">
+                        <div class="card-thumbnail active">Angle 1</div>
+                        <div class="card-thumbnail">Angle 2</div>
+                        <div class="card-thumbnail">Interior</div>
+                        <div class="card-thumbnail">Battery</div>
+                    </div>
+                    <div class="card-main-img">Electric Coupe - Main Image</div>
+                    <div class="card-content">
+                        <h3 class="card-title">Electric Performance Coupe</h3>
+                        <div class="card-specs">• Dual Electric Motors • 750 HP • 300 Mile Range • Autonomous Driving</div>
+                        <p class="card-desc">The future of performance driving is here. This all-electric coupe offers instant torque, zero emissions, and groundbreaking technology.</p>
+                        <div class="card-price">$219,995 <span>MSRP</span></div>
+                        <div class="card-rating">
+                            <span class="rating-label">Popularity:</span>
+                            <div class="stars">
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                                <span class="star filled">★</span>
+                                <span class="star filled">☆</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页面3：地址和联系按钮页 -->
+    <section class="page page-3" id="page3">
+        <div class="dealer-location">
+            <h2>Our Dealership Location</h2>
+            <p>Google Maps Address: 456 Luxury Auto Blvd, Beverly Hills, CA 90210, United States</p>
+            <p>Visit our state-of-the-art showroom to experience our premium vehicles in person. Our knowledgeable staff are available 7 days a week to assist you with your automotive needs.</p>
+            <p>Google Maps Link: <a href="#" style="color: #f7971e; text-decoration: underline;">View on Google Maps</a></p>
+        </div>
+        <div class="action-section">
+            <h2>Get In Touch With Us</h2>
+            <div class="action-buttons">
+                <a href="#" class="action-btn">Request a Quote (Google Form)</a>
+                <a href="#" class="action-btn">Contact Our Sales Team</a>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // 获取元素
+        const navbar = document.getElementById('navbar');
+        const pages = document.querySelectorAll('.page');
+        const page1 = document.getElementById('page1');
+        const page3 = document.getElementById('page3');
+        // 新增：新品和经典产品展示框的滚动监听
+        const newProducts = document.getElementById('new-products');
+        const classicProducts = document.getElementById('classic-products');
+
+        // 监听滚动事件实现动态效果
+        window.addEventListener('scroll', function() {
+            const scrollY = window.scrollY;
+            const windowHeight = window.innerHeight;
+
+            // 1. 导航栏雾化效果
+            if (scrollY > 50) {
+                navbar.classList.add('blur');
+            } else {
+                navbar.classList.remove('blur');
+            }
+
+            // 2. 新品展示框液态缩放效果
+            const newProductsTop = newProducts.offsetTop;
+            const newProductsVisible = scrollY + windowHeight > newProductsTop + 100;
+            if (newProductsVisible) {
+                newProducts.style.opacity = 1;
+                newProducts.style.transform = 'scale(1) translateY(0)';
+            }
+
+            // 3. 经典产品展示框液态缩放效果
+            const classicProductsTop = classicProducts.offsetTop;
+            const classicProductsVisible = scrollY + windowHeight > classicProductsTop + 100;
+            if (classicProductsVisible) {
+                classicProducts.style.opacity = 1;
+                classicProducts.style.transform = 'scale(1) translateY(0)';
+            }
+
+            // 4. 页面3液态缩放效果
+            const page3Top = page3.offsetTop;
+            const page3Visible = scrollY + windowHeight > page3Top + 100;
+            if (page3Visible) {
+                page3.classList.add('visible');
+            }
+
+            // 页面1雾化效果
+            const page1Bottom = page1.offsetTop + page1.offsetHeight;
+            if (scrollY > page1Bottom - windowHeight) {
+                const blurValue = Math.min((scrollY - (page1Bottom - windowHeight)) / 80, 8);
+                const opacityValue = 1 - (scrollY - (page1Bottom - windowHeight)) / (windowHeight * 1.2);
+                page1.style.opacity = opacityValue;
+                page1.style.filter = `blur(${blurValue}px) saturate(${100 - blurValue * 5}%)`;
+                page1.style.transform = `scale(${1 - blurValue/100})`;
+            } else {
+                page1.style.opacity = 1;
+                page1.style.filter = 'blur(0px) saturate(100%)';
+                page1.style.transform = 'scale(1)';
+            }
+        });
+
+        // 初始化
+        window.dispatchEvent(new Event('scroll'));
+
+        // 卡片小图切换主图功能 - 兼容所有卡片
+        document.querySelectorAll('.card-thumbnails').forEach(thumbnailBar => {
+            thumbnailBar.querySelectorAll('.card-thumbnail').forEach((thumbnail, index) => {
+                thumbnail.addEventListener('click', () => {
+                    thumbnailBar.querySelectorAll('.card-thumbnail').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    thumbnail.classList.add('active');
+                    const mainImg = thumbnail.closest('.car-card').querySelector('.card-main-img');
+                    mainImg.style.opacity = 0;
+                    setTimeout(() => {
+                        // 保留图片切换逻辑，如需给其他角度加图可扩展
+                        mainImg.textContent = ''; // 清空文字
+                        mainImg.style.opacity = 1;
+                    }, 300);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
