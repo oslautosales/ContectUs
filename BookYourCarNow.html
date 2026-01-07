@@ -38,8 +38,10 @@
             justify-content: space-between;
             align-items: center;
             z-index: 1000;
-            transition: all 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.3s ease-out; /* 优化：缩短动画时长，简化曲线 */
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            will-change: background-color, box-shadow; /* 性能优化：提前告知浏览器将要变化的属性 */
+            overflow: visible; /* 新增：避免导航栏内元素被裁剪 */
         }
 
         /* Logo容器样式 */
@@ -47,18 +49,25 @@
             display: flex;
             align-items: center;
             gap: clamp(0.5rem, 1vw, 1rem); /* 响应式间距 */
+            will-change: transform; /* 性能优化 */
+            backface-visibility: hidden; /* 防止闪烁 */
         }
 
-        /* Logo图片样式 */
+        /* Logo图片样式 - 核心性能优化 */
         .navbar-logo {
             height: clamp(2rem, 4vw, 2.5rem); /* 响应式高度 */
             width: auto; /* 保持宽高比 */
             object-fit: contain;
-            transition: all 0.6s ease;
+            /* 性能优化：简化动画，缩短时长，使用硬件加速 */
+            transition: transform 0.2s ease-out; 
+            transform: translateZ(0); /* 硬件加速 */
+            backface-visibility: hidden; /* 防止闪烁 */
+            perspective: 1000px; /* 优化3D变换性能 */
         }
 
+        /* 优化：缩小缩放比例，降低性能消耗 */
         .navbar.blur .navbar-logo {
-            transform: scale(1.05); /* 雾化时轻微放大 */
+            transform: scale(1.02); /* 从1.05降到1.02，减少变换幅度 */
         }
 
         .navbar.blur {
@@ -71,34 +80,36 @@
 
         .navbar h1 {
             color: #f7971e;
-            font-size: 1.5rem;
+            font-size: clamp(1.2rem, 2vw, 1.8rem); /* 优化：更宽的响应范围 */
             letter-spacing: 0.8px;
-            transition: all 0.8s ease;
+            transition: all 0.3s ease-out; /* 优化：缩短动画时长 */
             white-space: nowrap; /* 防止文字换行 */
         }
 
-        /* 苹果风格液态按钮 - 修复移动端尺寸问题 */
+        /* 苹果风格液态按钮 - 全面优化字体响应式 */
         .nav-btn {
             background-color: #f7971e;
             color: #0a192f;
             border: none;
-            padding: clamp(0.5rem, 1.5vw, 0.7rem) clamp(1rem, 3vw, 1.4rem);
+            padding: clamp(0.6rem, 2vw, 0.8rem) clamp(1.2rem, 3vw, 1.8rem);
             border-radius: 12px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: all 0.3s ease-out;
             box-shadow: 0 4px 15px rgba(247, 151, 30, 0.2);
             white-space: nowrap;
-            font-size: clamp(0.8rem, 1.8vw, 1rem);
+            /* 核心优化：字体大小使用更精细的响应式范围 */
+            font-size: clamp(0.9rem, 1.8vw, 1.15rem);
+            line-height: 1.4; /* 增加行高提升可读性 */
             width: auto;
             max-width: 90%;
-            display: inline-block; /* 确保按钮样式正确 */
+            display: inline-block;
         }
 
         .nav-btn:hover, .nav-btn:focus {
             background-color: #ffb74d;
             outline: none;
-            transform: translateY(-2px) scale(1.05);
+            transform: translateY(-2px) scale(1.03);
             box-shadow: 0 8px 25px rgba(247, 151, 30, 0.35);
         }
 
@@ -113,7 +124,7 @@
             justify-content: center;
             opacity: 0;
             transform: scale(0.85) translateY(30px);
-            transition: all 1.5s cubic-bezier(0.23, 1, 0.32, 1);
+            transition: all 0.8s ease-out;
         }
 
         .page.visible {
@@ -174,32 +185,37 @@
             background-color: #ffffff;
             border-radius: clamp(16px, 3vw, 24px);
             margin: clamp(1rem, 4vw, 2rem) auto;
-            padding: clamp(2rem, 5vw, 4rem) clamp(1rem, 3vw, 2rem);
+            padding: clamp(2rem, 5vw, 4rem) clamp(2rem, 3vw, 3rem); /* 增加左右内边距 */
             box-shadow: 0 10px 40px rgba(10, 25, 47, 0.05);
             position: relative;
             z-index: 5;
-            width: 95%;
+            width: 98%; /* 从95%调整为98%，减少边缘裁剪 */
             opacity: 0;
             transform: scale(0.85) translateY(30px);
-            transition: all 1.5s cubic-bezier(0.23, 1, 0.32, 1);
+            transition: all 0.8s ease-out;
+            will-change: opacity, transform;
         }
 
-        /* 行动按钮样式 */
+        /* 行动按钮样式 - 全面优化字体响应式 */
         .action-btn {
             background-color: #0a192f;
             color: #ffffff;
             border: 2px solid #f7971e;
-            padding: clamp(0.6rem, 2vw, 1.2rem) clamp(1rem, 3vw, 2.5rem);
+            padding: clamp(0.8rem, 2.5vw, 1.4rem) clamp(1.2rem, 3.5vw, 2.8rem);
             border-radius: clamp(10px, 2vw, 16px);
-            font-size: clamp(0.8rem, 1.8vw, 1.15rem);
+            /* 核心优化：字体大小使用更合理的响应式范围 */
+            font-size: clamp(0.95rem, 2vw, 1.25rem);
+            line-height: 1.5; /* 增加行高 */
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.7s cubic-bezier(0.23, 1, 0.32, 1);
-            text-decoration: none; /* 确保没有下划线 */
-            min-width: clamp(140px, 50vw, 180px);
+            transition: all 0.4s ease-out;
+            text-decoration: none;
+            min-width: clamp(160px, 50vw, 200px); /* 增加最小宽度 */
             text-align: center;
             display: inline-block;
             box-shadow: 0 6px 20px rgba(10, 25, 47, 0.1);
+            word-wrap: break-word; /* 防止文字溢出 */
+            hyphens: auto; /* 自动连字符 */
         }
 
         .action-btn:hover, .action-btn:focus {
@@ -248,7 +264,8 @@
             border-radius: clamp(12px, 2vw, 20px);
             box-shadow: 0 12px 36px rgba(10, 25, 47, 0.08);
             overflow: hidden;
-            transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+            transition: all 0.4s ease-out;
+            transform: translateZ(0);
         }
 
         .car-card:hover {
@@ -273,8 +290,12 @@
             justify-content: center;
             color: #64748b;
             cursor: pointer;
-            font-size: clamp(0.8rem, 1.5vw, 1rem);
-            transition: all 0.6s ease;
+            /* 优化缩略图文字大小 */
+            font-size: clamp(0.75rem, 1.4vw, 0.95rem);
+            line-height: 1.3;
+            padding: 0 4px; /* 增加内边距防止文字挤压 */
+            text-align: center;
+            transition: all 0.3s ease-out;
         }
 
         .card-thumbnail:last-child {
@@ -306,6 +327,8 @@
             padding: clamp(1rem, 2vw, 2rem);
             position: relative;
             min-height: 300px;
+            overflow: hidden; /* 新增：防止内容溢出卡片 */
+            word-wrap: break-word; /* 新增：长文本自动换行 */
         }
 
         .card-title {
@@ -313,7 +336,6 @@
             font-weight: 700;
             color: #0a192f;
             margin-bottom: clamp(0.5rem, 1vw, 1rem);
-            /* 移除了底部边框：border-bottom: 2px solid #f7971e; */
             padding-bottom: clamp(0.4rem, 1vw, 0.8rem);
             display: inline-block;
         }
@@ -376,33 +398,36 @@
             color: #f7971e;
         }
 
-        /* 核心修复：产品卡片右下角预约看车按钮 - 全响应式优化 */
+        /* 核心修复：产品卡片右下角预约看车按钮 - 全面优化字体响应式 */
         .book-viewing-btn {
             position: absolute;
-            bottom: clamp(0.8rem, 1.5vw, 1.5rem); /* 响应式底部间距 */
-            right: clamp(0.8rem, 1.5vw, 1.5rem);  /* 响应式右侧间距 */
+            bottom: clamp(0.8rem, 1.5vw, 1.5rem);
+            right: clamp(0.8rem, 1.5vw, 1.5rem);
             background-color: #f7971e;
             color: #0a192f;
             border: none;
-            padding: clamp(0.4rem, 1vw, 0.6rem) clamp(0.6rem, 1.5vw, 1rem); /* 小屏更小内边距 */
-            border-radius: clamp(8px, 1.2vw, 10px); /* 响应式圆角 */
-            font-size: clamp(0.7rem, 1.2vw, 0.85rem); /* 小屏更小字体 */
+            padding: clamp(0.6rem, 1.2vw, 0.8rem) clamp(0.8rem, 1.8vw, 1.2rem);
+            border-radius: clamp(8px, 1.2vw, 10px);
+            /* 核心优化：字体大小使用更精细的响应式范围 */
+            font-size: clamp(0.8rem, 1.4vw, 0.95rem);
+            line-height: 1.4; /* 增加行高 */
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: all 0.3s ease-out;
             box-shadow: 0 4px 15px rgba(247, 151, 30, 0.2);
             white-space: nowrap;
             z-index: 10;
-            min-width: 120px; /* 保证最小点击区域 */
-            max-width: calc(100% - 2*clamp(0.8rem, 1.5vw, 1.5rem)); /* 不超出卡片 */
-            text-decoration: none; /* 确保没有下划线 */
+            min-width: 130px; /* 增加最小宽度 */
+            max-width: calc(100% - 2*clamp(0.8rem, 1.5vw, 1.5rem));
+            text-decoration: none;
             display: inline-block;
+            text-align: center; /* 确保文字居中 */
         }
 
         .book-viewing-btn:hover, .book-viewing-btn:focus {
             background-color: #ffb74d;
             outline: none;
-            transform: translateY(-2px) scale(1.03); /* 小屏更克制的缩放 */
+            transform: translateY(-2px) scale(1.03);
             box-shadow: 0 6px 20px rgba(247, 151, 30, 0.3);
         }
 
@@ -412,7 +437,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: clamp(2rem, 5vw, 4rem);
-            align-items: start; /* 修改为start避免地图容器被拉伸 */
+            align-items: start;
             position: relative;
             z-index: 5;
             width: 95%;
@@ -425,7 +450,7 @@
             color: #e6f1ff;
             border-radius: clamp(16px, 3vw, 24px);
             box-shadow: 0 12px 40px rgba(10, 25, 47, 0.15);
-            transition: all 1s ease;
+            transition: all 0.5s ease-out;
             width: 100%;
         }
 
@@ -444,13 +469,13 @@
             font-size: clamp(0.9rem, 2vw, 1.2rem);
             line-height: 1.8;
             color: #94a3b8;
-            margin-bottom: clamp(1rem, 2vw, 1.5rem); /* 增加底部间距 */
+            margin-bottom: clamp(1rem, 2vw, 1.5rem);
         }
 
         /* 谷歌地图容器样式 - 关键修复 */
         .map-container {
             width: 100%;
-            height: clamp(300px, 40vw, 450px); /* 响应式高度 */
+            height: clamp(300px, 40vw, 450px);
             border-radius: clamp(8px, 1vw, 12px);
             overflow: hidden;
             margin-bottom: clamp(1rem, 2vw, 1.5rem);
@@ -509,37 +534,108 @@
 
         /* 页面1雾化效果 - 慢速度 */
         .page-1-blur {
-            transition: all 1.8s ease-out !important;
+            transition: all 0.8s ease-out !important;
         }
 
-        /* 媒体查询：针对小屏手机的额外优化（兜底） */
-        @media (max-width: 420px) {
+        /* 多层媒体查询 - 为不同尺寸设备提供精准的字体大小 */
+        /* 超小屏手机 (小于360px) */
+        @media (max-width: 360px) {
             .navbar {
-                padding: 0.8rem 1rem;
+                padding: 0.7rem 0.8rem;
             }
             .navbar h1 {
+                font-size: 1rem;
+            }
+            .navbar-logo {
+                height: 1.6rem;
+            }
+            /* 导航栏按钮 */
+            .nav-btn {
+                font-size: 0.85rem;
+                padding: 0.5rem 0.8rem;
+                white-space: normal; /* 允许按钮文字换行 */
+                text-align: center;
+            }
+            /* 行动按钮 */
+            .action-btn {
+                font-size: 0.9rem;
+                min-width: 140px;
+                padding: 0.7rem 1rem;
+            }
+            /* 预约看车按钮 */
+            .book-viewing-btn {
+                font-size: 0.75rem;
+                padding: 0.5rem 0.7rem;
+                min-width: 120px;
+            }
+            /* 卡片缩略图 */
+            .card-thumbnail {
+                font-size: 0.7rem;
+                padding: 0 2px;
+            }
+        }
+
+        /* 小屏手机 (360px - 480px) */
+        @media (min-width: 361px) and (max-width: 480px) {
+            .nav-btn {
+                font-size: 0.9rem;
+            }
+            .action-btn {
+                font-size: 0.95rem;
+            }
+            .book-viewing-btn {
+                font-size: 0.8rem;
+            }
+            .card-thumbnail {
+                font-size: 0.75rem;
+            }
+        }
+
+        /* 平板设备 (768px - 1024px) */
+        @media (min-width: 768px) and (max-width: 1024px) {
+            .nav-btn {
+                font-size: 1rem;
+            }
+            .action-btn {
+                font-size: 1.1rem;
+            }
+            .book-viewing-btn {
+                font-size: 0.9rem;
+            }
+            .card-thumbnail {
+                font-size: 0.85rem;
+            }
+        }
+
+        /* 大屏设备 (大于1200px) */
+        @media (min-width: 1200px) {
+            .nav-btn {
+                font-size: 1.1rem;
+            }
+            .action-btn {
                 font-size: 1.2rem;
             }
-            /* 小屏Logo缩小 */
-            .navbar-logo {
-                height: 1.8rem;
-            }
-            .action-buttons {
-                gap: 1rem;
-            }
-            /* 小屏强制按钮更紧凑 */
             .book-viewing-btn {
-                padding: 0.4rem 0.6rem;
-                font-size: 0.7rem;
-                min-width: 110px;
+                font-size: 0.95rem;
             }
-            /* 卡片内容区增加底部内边距，避免按钮遮挡 */
-            .card-content {
-                padding-bottom: 3.5rem;
+            .card-thumbnail {
+                font-size: 0.9rem;
             }
-            /* 小屏地图高度调整 */
-            .map-container {
-                height: 250px;
+        }
+
+        /* 超大屏设备 (大于1600px) */
+        @media (min-width: 1600px) {
+            .nav-btn {
+                font-size: 1.15rem;
+            }
+            .action-btn {
+                font-size: 1.25rem;
+            }
+            .book-viewing-btn {
+                font-size: 1rem;
+            }
+            .card-thumbnail {
+                font-size: 0.9rem;
             }
         }
     </style>
@@ -547,10 +643,7 @@
 <body>
     <!-- 固定顶部导航栏 - 添加了Logo容器 -->
     <nav class="navbar" id="navbar">
-        <div class="logo-container">
-            <img src="PeroduaLogo.png" alt="Perodua Logo" class="navbar-logo">
-            <h1>OSL Auto Sales</h1>
-        </div>
+        <h1>OSL Auto Sales</h1>
         <a href="#" class="nav-btn">Contact Our Dealership</a>
     </nav>
 
@@ -842,54 +935,59 @@
         const newProducts = document.getElementById('new-products');
         const classicProducts = document.getElementById('classic-products');
 
-        // 监听滚动事件实现动态效果
+        // 性能优化：防抖处理滚动事件
+        let scrollTimer;
         window.addEventListener('scroll', function() {
-            const scrollY = window.scrollY;
-            const windowHeight = window.innerHeight;
+            // 防抖：50ms内只执行一次，减少高频触发
+            clearTimeout(scrollTimer);
+            scrollTimer = setTimeout(() => {
+                const scrollY = window.scrollY;
+                const windowHeight = window.innerHeight;
 
-            // 1. 导航栏雾化效果
-            if (scrollY > 50) {
-                navbar.classList.add('blur');
-            } else {
-                navbar.classList.remove('blur');
-            }
+                // 1. 导航栏雾化效果
+                if (scrollY > 50) {
+                    navbar.classList.add('blur');
+                } else {
+                    navbar.classList.remove('blur');
+                }
 
-            // 2. 新品展示框液态缩放效果
-            const newProductsTop = newProducts.offsetTop;
-            const newProductsVisible = scrollY + windowHeight > newProductsTop + 100;
-            if (newProductsVisible) {
-                newProducts.style.opacity = 1;
-                newProducts.style.transform = 'scale(1) translateY(0)';
-            }
+                // 2. 新品展示框液态缩放效果
+                const newProductsTop = newProducts.offsetTop;
+                const newProductsVisible = scrollY + windowHeight > newProductsTop + 100;
+                if (newProductsVisible) {
+                    newProducts.style.opacity = 1;
+                    newProducts.style.transform = 'scale(1) translateY(0)';
+                }
 
-            // 3. 经典产品展示框液态缩放效果
-            const classicProductsTop = classicProducts.offsetTop;
-            const classicProductsVisible = scrollY + windowHeight > classicProductsTop + 100;
-            if (classicProductsVisible) {
-                classicProducts.style.opacity = 1;
-                classicProducts.style.transform = 'scale(1) translateY(0)';
-            }
+                // 3. 经典产品展示框液态缩放效果
+                const classicProductsTop = classicProducts.offsetTop;
+                const classicProductsVisible = scrollY + windowHeight > classicProductsTop + 100;
+                if (classicProductsVisible) {
+                    classicProducts.style.opacity = 1;
+                    classicProducts.style.transform = 'scale(1) translateY(0)';
+                }
 
-            // 4. 页面3液态缩放效果
-            const page3Top = page3.offsetTop;
-            const page3Visible = scrollY + windowHeight > page3Top + 100;
-            if (page3Visible) {
-                page3.classList.add('visible');
-            }
+                // 4. 页面3液态缩放效果
+                const page3Top = page3.offsetTop;
+                const page3Visible = scrollY + windowHeight > page3Top + 100;
+                if (page3Visible) {
+                    page3.classList.add('visible');
+                }
 
-            // 页面1雾化效果
-            const page1Bottom = page1.offsetTop + page1.offsetHeight;
-            if (scrollY > page1Bottom - windowHeight) {
-                const blurValue = Math.min((scrollY - (page1Bottom - windowHeight)) / 80, 8);
-                const opacityValue = 1 - (scrollY - (page1Bottom - windowHeight)) / (windowHeight * 1.2);
-                page1.style.opacity = opacityValue;
-                page1.style.filter = `blur(${blurValue}px) saturate(${100 - blurValue * 5}%)`;
-                page1.style.transform = `scale(${1 - blurValue/100})`;
-            } else {
-                page1.style.opacity = 1;
-                page1.style.filter = 'blur(0px) saturate(100%)';
-                page1.style.transform = 'scale(1)';
-            }
+                // 页面1雾化效果
+                const page1Bottom = page1.offsetTop + page1.offsetHeight;
+                if (scrollY > page1Bottom - windowHeight) {
+                    const blurValue = Math.min((scrollY - (page1Bottom - windowHeight)) / 80, 8);
+                    const opacityValue = 1 - (scrollY - (page1Bottom - windowHeight)) / (windowHeight * 1.2);
+                    page1.style.opacity = opacityValue;
+                    page1.style.filter = `blur(${blurValue}px) saturate(${100 - blurValue * 5}%)`;
+                    page1.style.transform = `scale(${1 - blurValue/100})`;
+                } else {
+                    page1.style.opacity = 1;
+                    page1.style.filter = 'blur(0px) saturate(100%)';
+                    page1.style.transform = 'scale(1)';
+                }
+            }, 50);
         });
 
         // 初始化
