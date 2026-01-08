@@ -48,7 +48,7 @@
             min-height: 60px;
         }
 
-        /* Logo容器样式 - 核心修改：弹性收缩 */
+        /* Logo容器样式 - 核心修改：弹性收缩 + 新增汉堡菜单在logo旁的布局 */
         .logo-container {
             display: flex;
             align-items: center;
@@ -58,6 +58,8 @@
             /* 关键：允许logo容器收缩，优先显示按钮 */
             flex: 1;
             min-width: 0; /* 允许子元素收缩 */
+            /* 新增：logo容器内部布局，汉堡菜单在logo旁 */
+            justify-content: flex-start;
         }
 
         /* Logo图片样式 - 核心性能优化 + 小屏尺寸调整 */
@@ -88,7 +90,7 @@
 
         .navbar h1 {
             color: #f7971e;
-            font-size: clamp(1rem, 1.8vw, 1.8rem); /* 降低最小字号 */
+            font-size: clamp(0.9rem, 1.8vw, 1.6rem); /* 【优化】降低最大字号，提升最小字号 */
             letter-spacing: 0.8px;
             transition: all 0.3s ease-out;
             white-space: nowrap;
@@ -98,7 +100,111 @@
             flex-shrink: 1;
         }
 
-        /* 苹果风格液态按钮 - 核心修改：优先级提升 */
+        /* ========== 新增：导航菜单样式 ========== */
+        /* 桌面端导航菜单 */
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: clamp(0.8rem, 1.5vw, 1.5rem);
+            flex: 2;
+            justify-content: flex-end;
+        }
+
+        /* 导航菜单项 */
+        .nav-link {
+            color: #e6f1ff;
+            font-size: clamp(0.8rem, 1.2vw, 1.05rem); /* 【优化】降低最大字号，更紧凑 */
+            font-weight: 500;
+            padding: 0.5rem 0.8rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .nav-link:hover {
+            color: #f7971e;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* 汉堡菜单按钮 - 仅移动端显示 (修改：调整位置到logo旁) */
+        .burger-btn {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            width: clamp(24px, 5vw, 30px);
+            height: clamp(20px, 4vw, 24px);
+            cursor: pointer;
+            z-index: 1001;
+            /* 新增：确保汉堡菜单在logo旁的间距 */
+            margin-right: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        .burger-line {
+            width: 100%;
+            height: 3px;
+            background-color: #e6f1ff;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        /* 汉堡菜单展开状态 */
+        .burger-btn.active .burger-line:nth-child(1) {
+            transform: translateY(8px) rotate(45deg);
+        }
+
+        .burger-btn.active .burger-line:nth-child(2) {
+            opacity: 0;
+        }
+
+        .burger-btn.active .burger-line:nth-child(3) {
+            transform: translateY(-8px) rotate(-45deg);
+        }
+
+        /* 移动端菜单面板 */
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 0;
+            height: 100vh;
+            background-color: rgba(10, 25, 47, 0.95);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            overflow: hidden;
+            transition: width 0.4s ease;
+            box-shadow: -5px 0 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .mobile-menu.active {
+            width: 100%;
+            max-width: 320px;
+        }
+
+        .mobile-link {
+            color: #e6f1ff;
+            font-size: clamp(1rem, 2.5vw, 1.3rem); /* 【优化】降低最大字号，更适配手机 */
+            font-weight: 600;
+            padding: 1rem 2rem;
+            width: 100%;
+            text-align: center;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-link:hover {
+            background-color: rgba(247, 151, 30, 0.2);
+            color: #f7971e;
+        }
+        /* ========== 导航菜单样式结束 ========== */
+
+        /* 苹果风格液态按钮 - 核心修改：优先级提升 (桌面端会隐藏) */
         .nav-btn {
             background-color: #f7971e;
             color: #0a192f;
@@ -110,13 +216,15 @@
             transition: all 0.3s ease-out;
             box-shadow: 0 4px 15px rgba(247, 151, 30, 0.2);
             white-space: nowrap;
-            font-size: clamp(0.8rem, 1.5vw, 1.15rem); /* 降低最小字号 */
+            font-size: clamp(0.75rem, 1.2vw, 1.05rem); /* 【优化】降低字号，更紧凑 */
             line-height: 1.4;
             /* 关键：按钮不收缩，优先显示 */
             flex-shrink: 0;
             /* 确保按钮最小尺寸 */
             min-width: 120px;
             text-align: center;
+            /* 新增：桌面端隐藏该按钮 */
+            display: none;
         }
 
         .nav-btn:hover, .nav-btn:focus {
@@ -176,7 +284,7 @@
         }
 
         .brand-intro h2 {
-            font-size: clamp(2rem, 5vw, 3.2rem);
+            font-size: clamp(1.8rem, 4vw, 2.8rem); /* 【优化】降低最大字号，更协调 */
             color: #ffffff;
             margin-bottom: 2rem;
             font-weight: 700;
@@ -185,7 +293,7 @@
         }
 
         .brand-intro p {
-            font-size: clamp(1rem, 2.5vw, 1.3rem);
+            font-size: clamp(0.95rem, 2vw, 1.2rem); /* 【优化】调整字号范围 */
             line-height: 1.8;
             max-width: 800px;
             color: #e6f1ff;
@@ -209,6 +317,15 @@
             will-change: opacity, transform;
         }
 
+        /* 产品区域标题样式 - 新增 */
+        .product-section h2 {
+            font-size: clamp(1.2rem, 2.5vw, 1.8rem); /* 【优化】响应式标题字号 */
+            color: #0a192f;
+            margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
         /* 行动按钮样式 - 全面优化字体响应式 */
         .action-btn {
             background-color: #0a192f;
@@ -216,7 +333,7 @@
             border: 2px solid #f7971e;
             padding: clamp(0.8rem, 2.5vw, 1.4rem) clamp(1.2rem, 3.5vw, 2.8rem);
             border-radius: clamp(10px, 2vw, 16px);
-            font-size: clamp(0.95rem, 2vw, 1.25rem);
+            font-size: clamp(0.85rem, 1.8vw, 1.15rem); /* 【优化】调整字号范围 */
             line-height: 1.5;
             font-weight: 600;
             cursor: pointer;
@@ -267,10 +384,11 @@
             padding: 0 clamp(0.5rem, 1vw, 1rem);
         }
 
-        /* 汽车卡片 - 全设备响应式核心 */
+        /* 汽车卡片 - 全设备响应式核心 【重点优化】 */
         .car-card {
-            flex: 0 0 clamp(90%, 90%, 30%); 
+            flex: 0 0 clamp(280px, 25vw, 380px); /* 【优化】重新定义卡片宽度，电脑端更合理 */
             min-width: 280px;
+            max-width: 400px; /* 【新增】限制卡片最大宽度，防止电脑端过大 */
             scroll-snap-align: start;
             background-color: #ffffff;
             border-radius: clamp(12px, 2vw, 20px);
@@ -288,7 +406,7 @@
         /* 卡片顶部小图栏 - 高度适配 */
         .card-thumbnails {
             display: flex;
-            height: clamp(50px, 10vw, 80px);
+            height: clamp(40px, 8vw, 70px); /* 【优化】降低高度，更紧凑 */
             border-bottom: 1px solid #f0f0f0;
         }
 
@@ -302,11 +420,12 @@
             justify-content: center;
             color: #64748b;
             cursor: pointer;
-            font-size: clamp(0.75rem, 1.4vw, 0.95rem);
-            line-height: 1.3;
-            padding: 0 4px;
+            font-size: clamp(0.7rem, 1.2vw, 0.9rem); /* 【优化】调整字号 */
+            line-height: 1.2; /* 【优化】降低行高，防止文字溢出 */
+            padding: 0 2px; /* 【优化】减少内边距 */
             text-align: center;
             transition: all 0.3s ease-out;
+            word-break: break-word; /* 【新增】强制换行，防止文字溢出 */
         }
 
         .card-thumbnail:last-child {
@@ -322,7 +441,7 @@
         /* 卡片主图区域 - 高度响应式 + 图片适配 */
         .card-main-img {
             width: 100%;
-            aspect-ratio: 15/9;
+            aspect-ratio: 16/9; /* 【优化】更标准的宽高比 */
             object-fit: cover;
             background-size: cover;
             background-position: center;
@@ -333,50 +452,52 @@
             color: #64748b;
         }
 
-        /* 卡片内容区域 - 内边距适配 */
+        /* 卡片内容区域 - 内边距适配 【重点优化】 */
         .card-content {
-            padding: clamp(1rem, 2vw, 2rem);
+            padding: clamp(0.8rem, 1.8vw, 1.8rem); /* 【优化】减少内边距 */
             position: relative;
-            min-height: 300px;
+            min-height: 280px; /* 【优化】降低最小高度 */
             overflow: hidden;
             word-wrap: break-word;
         }
 
         .card-title {
-            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            font-size: clamp(1.1rem, 2.5vw, 1.6rem); /* 【优化】调整字号范围 */
             font-weight: 700;
             color: #0a192f;
-            margin-bottom: clamp(0.5rem, 1vw, 1rem);
-            padding-bottom: clamp(0.4rem, 1vw, 0.8rem);
+            margin-bottom: clamp(0.4rem, 0.8vw, 0.8rem);
+            padding-bottom: clamp(0.3rem, 0.8vw, 0.7rem);
             display: inline-block;
+            line-height: 1.2; /* 【新增】控制行高 */
         }
 
         .card-specs {
-            font-size: clamp(0.9rem, 1.8vw, 1.15rem);
+            font-size: clamp(0.85rem, 1.5vw, 1.05rem); /* 【优化】调整字号 */
             color: #475569;
-            line-height: 1.8;
-            margin-bottom: clamp(0.5rem, 1vw, 1rem);
+            line-height: 1.6; /* 【优化】降低行高 */
+            margin-bottom: clamp(0.4rem, 0.8vw, 0.8rem);
         }
 
         .card-desc {
-            font-size: clamp(0.9rem, 1.8vw, 1.1rem);
+            font-size: clamp(0.85rem, 1.5vw, 1.05rem); /* 【优化】调整字号 */
             color: #334155;
-            line-height: 1.7;
-            margin-bottom: clamp(1rem, 1.5vw, 1.5rem);
+            line-height: 1.6; /* 【优化】降低行高 */
+            margin-bottom: clamp(0.8rem, 1.2vw, 1.2rem);
         }
 
         .card-price {
-            font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+            font-size: clamp(1.1rem, 2vw, 1.4rem); /* 【优化】调整字号 */
             font-weight: 700;
             color: #f7971e;
-            margin-bottom: clamp(0.5rem, 1vw, 1rem);
+            margin-bottom: clamp(0.4rem, 0.8vw, 0.8rem);
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.4rem; /* 【优化】减少间距 */
+            flex-wrap: wrap; /* 【新增】防止价格和货币单位换行溢出 */
         }
 
         .card-price span {
-            font-size: clamp(0.8rem, 1.5vw, 1rem);
+            font-size: clamp(0.75rem, 1.2vw, 0.9rem); /* 【优化】调整字号 */
             color: #64748b;
             font-weight: 400;
         }
@@ -384,23 +505,24 @@
         .card-rating {
             display: flex;
             align-items: center;
-            gap: clamp(0.5rem, 1vw, 0.8rem);
-            margin-top: clamp(0.5rem, 1vw, 1rem);
+            gap: clamp(0.4rem, 0.8vw, 0.7rem); /* 【优化】减少间距 */
+            margin-top: clamp(0.4rem, 0.8vw, 0.8rem);
+            flex-wrap: wrap; /* 【新增】防止评分元素溢出 */
         }
 
         .rating-label {
-            font-size: clamp(0.9rem, 1.8vw, 1.1rem);
+            font-size: clamp(0.85rem, 1.5vw, 1.05rem); /* 【优化】调整字号 */
             color: #475569;
             font-weight: 600;
         }
 
         .stars {
             display: flex;
-            gap: clamp(0.1rem, 0.3vw, 0.2rem);
+            gap: clamp(0.1rem, 0.2vw, 0.15rem); /* 【优化】减少间距 */
         }
 
         .star {
-            font-size: clamp(0.9rem, 1.8vw, 1.2rem);
+            font-size: clamp(0.85rem, 1.5vw, 1.1rem); /* 【优化】调整字号 */
             color: #e2e8f0;
             transition: color 0.3s ease;
         }
@@ -412,23 +534,23 @@
         /* 核心修复：产品卡片右下角预约看车按钮 - 全面优化字体响应式 */
         .book-viewing-btn {
             position: absolute;
-            bottom: clamp(0.8rem, 1.5vw, 1.5rem);
-            right: clamp(0.8rem, 1.5vw, 1.5rem);
+            bottom: clamp(0.6rem, 1.2vw, 1.2rem); /* 【优化】减少间距 */
+            right: clamp(0.6rem, 1.2vw, 1.2rem); /* 【优化】减少间距 */
             background-color: #f7971e;
             color: #0a192f;
             border: none;
-            padding: clamp(0.6rem, 1.2vw, 0.8rem) clamp(0.8rem, 1.8vw, 1.2rem);
+            padding: clamp(0.5rem, 1vw, 0.7rem) clamp(0.7rem, 1.5vw, 1rem); /* 【优化】减少内边距 */
             border-radius: clamp(8px, 1.2vw, 10px);
-            font-size: clamp(0.8rem, 1.4vw, 0.95rem);
-            line-height: 1.4;
+            font-size: clamp(0.75rem, 1.2vw, 0.9rem); /* 【优化】调整字号 */
+            line-height: 1.3; /* 【优化】降低行高 */
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease-out;
             box-shadow: 0 4px 15px rgba(247, 151, 30, 0.2);
             white-space: nowrap;
             z-index: 10;
-            min-width: 130px;
-            max-width: calc(100% - 2*clamp(0.8rem, 1.5vw, 1.5rem));
+            min-width: 120px; /* 【优化】降低最小宽度 */
+            max-width: calc(100% - 2*clamp(0.6rem, 1.2vw, 1.2rem));
             text-decoration: none;
             display: inline-block;
             text-align: center;
@@ -469,23 +591,25 @@
         }
 
         .dealer-location h2 {
-            font-size: clamp(1.5rem, 3vw, 2rem);
+            font-size: clamp(1.4rem, 2.8vw, 1.9rem); /* 【优化】调整字号 */
             margin-bottom: clamp(1rem, 2vw, 1.5rem);
             color: #ffffff;
             font-weight: 600;
+            line-height: 1.2;
         }
 
         .dealer-location p {
-            font-size: clamp(0.9rem, 2vw, 1.2rem);
-            line-height: 1.8;
+            font-size: clamp(0.85rem, 1.8vw, 1.1rem); /* 【优化】调整字号 */
+            line-height: 1.7; /* 【优化】降低行高 */
             color: #94a3b8;
             margin-bottom: clamp(1rem, 2vw, 1.5rem);
+            word-break: break-word; /* 【新增】防止长链接溢出 */
         }
 
         /* 谷歌地图容器样式 - 关键修复 */
         .map-container {
             width: 100%;
-            height: clamp(300px, 40vw, 450px);
+            height: clamp(280px, 35vw, 400px); /* 【优化】降低高度 */
             border-radius: clamp(8px, 1vw, 12px);
             overflow: hidden;
             margin-bottom: clamp(1rem, 2vw, 1.5rem);
@@ -504,10 +628,11 @@
         }
 
         .action-section h2 {
-            font-size: clamp(1.3rem, 3vw, 1.8rem);
+            font-size: clamp(1.2rem, 2.8vw, 1.7rem); /* 【优化】调整字号 */
             color: #0a192f;
             margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
             font-weight: 600;
+            line-height: 1.2;
         }
 
         .action-buttons {
@@ -531,15 +656,16 @@
         }
 
         .custom-area h2 {
-            font-size: clamp(1.5rem, 4vw, 2.2rem);
+            font-size: clamp(1.4rem, 3.5vw, 2.1rem); /* 【优化】调整字号 */
             color: #0a192f;
             margin-bottom: 2rem;
+            line-height: 1.2;
         }
 
         .custom-area p {
-            font-size: clamp(1rem, 2vw, 1.3rem);
+            font-size: clamp(0.95rem, 1.8vw, 1.2rem); /* 【优化】调整字号 */
             color: #475569;
-            line-height: 1.8;
+            line-height: 1.7;
         }
 
         /* 页面1雾化效果 - 慢速度 */
@@ -561,56 +687,111 @@
             .navbar-logo {
                 height: 1.2rem; /* 更小的logo */
             }
-            /* 导航栏按钮 - 优先保证显示 */
+            /* 导航栏按钮 - 移动端显示 */
             .nav-btn {
-                font-size: 0.75rem; /* 更小的字体 */
+                display: block;
+                font-size: 0.7rem; /* 【优化】更小的字体 */
                 padding: 0.4rem 0.6rem; /* 减少内边距 */
-                min-width: 100px; /* 最小宽度适配 */
+                min-width: 90px; /* 【优化】更小的最小宽度 */
                 border-radius: 8px; /* 更小的圆角 */
             }
             /* 行动按钮 */
             .action-btn {
-                font-size: 0.9rem;
-                min-width: 140px;
+                font-size: 0.85rem;
+                min-width: 130px;
                 padding: 0.7rem 1rem;
             }
             /* 预约看车按钮 */
             .book-viewing-btn {
-                font-size: 0.75rem;
-                padding: 0.5rem 0.7rem;
-                min-width: 120px;
+                font-size: 0.7rem;
+                padding: 0.4rem 0.6rem;
+                min-width: 110px;
             }
             /* 卡片缩略图 */
             .card-thumbnail {
-                font-size: 0.7rem;
+                font-size: 0.65rem;
                 padding: 0 2px;
+            }
+            /* 汉堡菜单按钮显示 (移动端) */
+            .burger-btn {
+                display: flex;
+            }
+            /* 桌面菜单隐藏 */
+            .nav-menu {
+                display: none;
+            }
+            /* 【新增】超小屏特殊处理 */
+            .card-content {
+                min-height: 260px;
+            }
+            .card-title {
+                font-size: 1rem;
             }
         }
 
-        /* 小屏手机 (360px - 480px) */
-        @media (min-width: 361px) and (max-width: 480px) {
+        /* 小屏手机 (360px - 768px) */
+        @media (min-width: 361px) and (max-width: 768px) {
+            /* 导航栏按钮 - 移动端显示 */
             .nav-btn {
-                font-size: 0.85rem;
-                min-width: 110px;
+                display: block;
+                font-size: 0.8rem;
+                min-width: 100px;
             }
             .action-btn {
-                font-size: 0.95rem;
+                font-size: 0.9rem;
             }
             .book-viewing-btn {
-                font-size: 0.8rem;
+                font-size: 0.75rem;
             }
             .card-thumbnail {
-                font-size: 0.75rem;
+                font-size: 0.7rem;
+            }
+            /* 汉堡菜单按钮显示 (移动端) */
+            .burger-btn {
+                display: flex;
+            }
+            /* 桌面菜单隐藏 */
+            .nav-menu {
+                display: none;
             }
         }
 
         /* 平板设备 (768px - 1024px) */
-        @media (min-width: 768px) and (max-width: 1024px) {
+        @media (min-width: 769px) and (max-width: 1024px) {
+            /* 导航栏按钮 - 桌面端隐藏 */
             .nav-btn {
-                font-size: 1rem;
+                display: none;
             }
             .action-btn {
-                font-size: 1.1rem;
+                font-size: 1.05rem;
+            }
+            .book-viewing-btn {
+                font-size: 0.85rem;
+            }
+            .card-thumbnail {
+                font-size: 0.8rem;
+            }
+            /* 显示桌面菜单，隐藏汉堡按钮 */
+            .nav-menu {
+                display: flex;
+            }
+            .burger-btn, .mobile-menu {
+                display: none;
+            }
+            /* 【新增】平板端卡片宽度优化 */
+            .car-card {
+                flex: 0 0 clamp(300px, 40vw, 350px);
+            }
+        }
+
+        /* 大屏设备 (大于1024px) */
+        @media (min-width: 1025px) {
+            /* 导航栏按钮 - 桌面端隐藏 */
+            .nav-btn {
+                display: none;
+            }
+            .action-btn {
+                font-size: 1.15rem;
             }
             .book-viewing-btn {
                 font-size: 0.9rem;
@@ -618,12 +799,20 @@
             .card-thumbnail {
                 font-size: 0.85rem;
             }
+            /* 显示桌面菜单，隐藏汉堡按钮 */
+            .nav-menu {
+                display: flex;
+            }
+            .burger-btn, .mobile-menu {
+                display: none;
+            }
         }
 
-        /* 大屏设备 (大于1200px) */
-        @media (min-width: 1200px) {
+        /* 超大屏设备 (大于1600px) */
+        @media (min-width: 1600px) {
+            /* 导航栏按钮 - 桌面端隐藏 */
             .nav-btn {
-                font-size: 1.1rem;
+                display: none;
             }
             .action-btn {
                 font-size: 1.2rem;
@@ -634,34 +823,50 @@
             .card-thumbnail {
                 font-size: 0.9rem;
             }
-        }
-
-        /* 超大屏设备 (大于1600px) */
-        @media (min-width: 1600px) {
-            .nav-btn {
-                font-size: 1.15rem;
+            /* 显示桌面菜单，隐藏汉堡按钮 */
+            .nav-menu {
+                display: flex;
             }
-            .action-btn {
-                font-size: 1.25rem;
-            }
-            .book-viewing-btn {
-                font-size: 1rem;
-            }
-            .card-thumbnail {
-                font-size: 0.9rem;
+            .burger-btn, .mobile-menu {
+                display: none;
             }
         }
     </style>
 </head>
 <body>
-    <!-- 固定顶部导航栏 - 添加了Logo容器 -->
+    <!-- 固定顶部导航栏 - 修改：汉堡菜单移到logo容器内 -->
     <nav class="navbar" id="navbar">
         <div class="logo-container">
+            <!-- 汉堡菜单按钮移到logo左侧 -->
+            <div class="burger-btn" id="burgerBtn">
+                <div class="burger-line"></div>
+                <div class="burger-line"></div>
+                <div class="burger-line"></div>
+            </div>
             <img src="PeroduaLogo.png" alt="Perodua Logo" class="navbar-logo">
             <h1>OSL Auto Sales</h1>
         </div>
+        
+        <!-- 桌面端导航菜单 -->
+        <div class="nav-menu">
+            <a href="#new-products" class="nav-link">New Cars</a>
+            <a href="#classic-products" class="nav-link">Classic Collection</a>
+            <a href="#page3" class="nav-link">Location & Map</a>
+            <a href="https://wa.me/60126581602" class="nav-link">Contact Us</a>
+        </div>
+        
+        <!-- Contact Our Dealership按钮保留但仅移动端显示 -->
         <a href="#" class="nav-btn">Contact Our Dealership</a>
     </nav>
+
+    <!-- 移动端菜单面板 -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="#new-products" class="mobile-link" onclick="closeMobileMenu()">New Cars</a>
+        <a href="#classic-products" class="mobile-link" onclick="closeMobileMenu()">Classic Collection</a>
+        <a href="#page3" class="mobile-link" onclick="closeMobileMenu()">Location & Map</a>
+        <a href="https://wa.me/60126581602" class="mobile-link" onclick="closeMobileMenu()">Contact Us</a>
+        <a href="#" class="mobile-link" onclick="closeMobileMenu()">Contact Our Dealership</a>
+    </div>
 
     <!-- 页面1：品牌介绍页 -->
     <section class="page page-1 page-1-blur" id="page1">
@@ -931,12 +1136,14 @@
             </div>
             
             <p>Google Maps Link: <a href="https://maps.app.goo.gl/uYvspF8sC5LLbFtt9" style="color: #f7971e; text-decoration: underline;">View on Google Maps</a></p>
+            <p>Waze Link: <a href="https://waze.com/ul/hw284ne9zk" style="color: #f7971e; text-decoration: underline;">View on Waze</a></p>
+            <p>Petal Maps Link: <a href="https://urldra.cloud.huawei.com/yJRIo6cWre" style="color: #f7971e; text-decoration: underline;">View on Petal Maps (Support With Huawei User)</a></p>
         </div>
         <div class="action-section">
             <h2>Get In Touch With Us</h2>
             <div class="action-buttons">
                 <a href="#" class="action-btn">Request a Quote (Google Form)</a>
-                <a href="#" class="action-btn">Contact Our Sales Team</a>
+                <a href="https://wa.me/60126581602" class="action-btn">Contact Our Sales Team</a>
                 <a href="#" class="action-btn">More car images (testing phase unstable)</a>
             </div>
         </div>
@@ -950,6 +1157,23 @@
         const page3 = document.getElementById('page3');
         const newProducts = document.getElementById('new-products');
         const classicProducts = document.getElementById('classic-products');
+        const burgerBtn = document.getElementById('burgerBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        // 汉堡菜单切换功能
+        burgerBtn.addEventListener('click', function() {
+            burgerBtn.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+            // 阻止页面滚动
+            document.body.style.overflow = mobileMenu.classList.contains('active') ? 'hidden' : 'auto';
+        });
+
+        // 关闭移动端菜单函数
+        function closeMobileMenu() {
+            burgerBtn.classList.remove('active');
+            mobileMenu.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
 
         // 性能优化：防抖处理滚动事件
         let scrollTimer;
@@ -1012,12 +1236,28 @@
         // 卡片小图切换主图功能 - 兼容所有卡片
         document.querySelectorAll('.card-thumbnail').forEach(thumbnail => {
             thumbnail.addEventListener('click', () => {
-                document.querySelectorAll('.card-thumbnail').forEach(item => item.classList.remove('active'));
+                // 移除所有active类
+                thumbnail.closest('.card-thumbnails').querySelectorAll('.card-thumbnail').forEach(item => {
+                    item.classList.remove('active');
+                });
+                // 只为当前卡片的缩略图添加active
                 thumbnail.classList.add('active');
                 const angle2Img = thumbnail.getAttribute('data-img');
                 const mainImgContainer = thumbnail.closest('.car-card').querySelector('.card-main-img');
-                mainImgContainer.style.backgroundImage = `url('${angle2Img}')`;
+                // 处理空图片路径
+                mainImgContainer.style.backgroundImage = angle2Img ? `url('${angle2Img}')` : 'none';
+                // 如果没有图片，显示占位文本
+                if (!angle2Img) {
+                    mainImgContainer.textContent = 'Image Coming Soon';
+                } else {
+                    mainImgContainer.textContent = '';
+                }
             });
+        });
+
+        // 【新增】窗口大小变化时重新计算布局
+        window.addEventListener('resize', function() {
+            window.dispatchEvent(new Event('scroll'));
         });
     </script>
 </body>
